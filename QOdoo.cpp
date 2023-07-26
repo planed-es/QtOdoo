@@ -62,13 +62,15 @@ void OdooService::findObject(const QString& objectType, int id, std::function<vo
 void OdooService::findObjects(const QString& objectType, const QOdooSearchQuery& filters, std::function<void(QVariant)> callback)
 {
   QVariantList params;
-  QVariantList wrapper, wrapperWrapper;
+  QVariantList wrapper, wrapperWrapper, wrapperWrapperWrapper;
   QVariantMap keyParameters;
 
   wrapper.push_back(filters.params);
   wrapperWrapper.push_back(wrapper);
+  wrapperWrapperWrapper.push_back(wrapperWrapper);
   params << objectType << "search_read";
-  params.push_back(wrapperWrapper);
+  params.push_back(wrapperWrapperWrapper);
+  keyParameters.insert("fields", QVariant::fromValue(filters._fields));
   if (filters._offset > 0)
     keyParameters.insert("offset", QVariant::fromValue(filters._offset));
   if (filters._limit > 0)

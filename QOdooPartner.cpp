@@ -30,9 +30,10 @@ QOdooPartner::QOdooPartner(QObject* parent) :
   _name("name"),
   _vat("vat"), _phone("phone"),
   _city("city"), _street("street"), _zip("zip"),
-  _companyType("company_type", NoCompanyType)
+  _companyType("company_type", NoCompanyType),
+  _comment("comment")
 {
-  _properties << &_name << &_vat << &_phone << &_city << &_street << &_zip << &_companyType;
+  _properties << &_name << &_vat << &_phone << &_city << &_street << &_zip << &_companyType << &_comment;
 }
 
 void QOdooPartner::fromVariantMap(QVariantMap data)
@@ -44,6 +45,7 @@ void QOdooPartner::fromVariantMap(QVariantMap data)
   _street.first      = data[_street.key].toString();
   _zip.first         = data[_zip.key].toString();
   _companyType.first = readCompanyType(data[_companyType.key]);
+  _comment.first     = data[_comment.key].toString();
 }
 
 QVariantMap QOdooPartner::xmlrpcTransaction() const
@@ -57,5 +59,6 @@ QVariantMap QOdooPartner::xmlrpcTransaction() const
   transaction.addProperty(_street);
   transaction.addProperty(_zip);
   transaction.addProperty<CompanyType, QString>(_companyType, &companyTypeToString);
+  transaction.addProperty(_comment);
   return transaction;
 }

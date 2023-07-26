@@ -12,6 +12,7 @@ class QOdooPartner : public QOdooModel
   Q_PROPERTY(QString city READ city WRITE setCity)
   Q_PROPERTY(QString street READ street WRITE setStreet)
   Q_PROPERTY(QString zip READ zip WRITE setZip)
+  Q_PROPERTY(QString comment READ comment WRITE setComment)
 public:
   const char* odooTypename() const override { return "res.partner"; }
 
@@ -34,6 +35,7 @@ public:
   void setStreet(const QString& value) { _street.set(value); }
   void setZip(const QString& value) { _zip.set(value); }
   void setCompanyType(CompanyType value) { _companyType.set(value); }
+  void setComment(const QString& value) { _comment.set(value); }
 
   const QString& name() const { return *_name; }
   const QString& vat() const { return *_vat; }
@@ -42,12 +44,13 @@ public:
   const QString& street() const { return *_street; }
   const QString& zip() const { return *_zip; }
   CompanyType    companyType() const { return *_companyType; }
+  const QString& comment() const { return *_comment; }
 
 protected:
   QVariantMap xmlrpcTransaction() const override;
 
 private:
-  Property<QString> _name, _vat, _phone, _city, _street, _zip;
+  Property<QString> _name, _vat, _phone, _city, _street, _zip, _comment;
   Property<CompanyType> _companyType;
 };
 

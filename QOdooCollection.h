@@ -7,7 +7,7 @@ class QOdooCollectionInterface : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(unsigned long limit READ limit WRITE setLimit NOTIFY queryChanged)
-  Q_PROPERTY(unsigned long page  READ page  WRITE page NOTIFY queryChanged)
+  Q_PROPERTY(unsigned long page  READ page  WRITE setPage NOTIFY queryChanged)
 public:
   QOdooCollectionInterface(QObject* parent = nullptr);
 
@@ -88,7 +88,7 @@ public:
 
   iterator end() const
   {
-    return iterator(*this, QOdooCollectionInterface::size()); }
+    return iterator(*this, QOdooCollectionInterface::size());
   }
 
   MODEL* at(std::size_t index) const
@@ -101,7 +101,7 @@ public:
 protected:
   void onQueryChanged() override
   {
-    service.fetch(QOdooCollectionInterface::_query, [this](QVector<MODEL*> results)
+    service.fetch<MODEL>(QOdooCollectionInterface::_query, [this](QVector<MODEL*> results)
     {
       for (MODEL* model : results)
         model->setParent(this);

@@ -82,6 +82,7 @@ public:
     return QOdooColumn(*this, column);
   }
 
+  QOdooSearchQuery& fields(const QStringList& value) { _fields = value; return *this; }
   QOdooSearchQuery& offset(unsigned long value) { _offset = value; return *this; }
   QOdooSearchQuery& limit(unsigned long value) { _limit = value; return *this; }
 
@@ -89,7 +90,8 @@ public:
   unsigned long getLimit() const { return _limit; }
 
 private:
-  QVariantList params;
+  QVariantList  params;
+  QStringList   _fields;
   unsigned long _offset = 0;
   unsigned long _limit = 0;
 };

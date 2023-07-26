@@ -14,7 +14,7 @@ public:
   template<typename MODEL>
   void fetch(const QOdooSearchQuery& query, std::function<void(QVector<MODEL*>)> callback)
   {
-    findObjects(MODEL().odooTypename(), query.params, [this, callback](QVariant results)
+    findObjects(MODEL().odooTypename(), query, [this, callback](QVariant results)
     {
       QVector<MODEL*> models;
 
