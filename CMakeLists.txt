@@ -9,8 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Network Xml REQUIRED)
 
-set(source_files QOdoo.cpp)
-set(header_files QOdoo.h)
+set(source_files QOdoo.cpp QOdooProduct.cpp QOdooPartner.cpp QOdooInvoice.cpp QOdooInvoiceLine.cpp)
+set(header_files QOdoo.h   QOdooProduct.h   QOdooPartner.h   QOdooInvoice.h   QOdooInvoiceLine.h)
 
 add_library(QtOdoo SHARED ${source_files} ${header_files})
 target_link_libraries(QtOdoo PRIVATE
