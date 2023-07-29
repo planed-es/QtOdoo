@@ -16,6 +16,7 @@ pkg_check_modules(QTXMLRPC REQUIRED QtXMLRpc>=1.0.0)
 
 set(source_files
 	QOdoo.cpp
+	QOdooModel.cpp
 	QOdooProduct.cpp
 	QOdooPartner.cpp
 	QOdooInvoice.cpp
@@ -24,6 +25,7 @@ set(source_files
 set(header_files
 	QOdoo.h
 	QOdooProduct.h
+	QOdooProductTemplate.h
 	QOdooPartner.h
 	QOdooInvoice.h
 	QOdooInvoiceLine.h

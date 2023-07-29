@@ -38,6 +38,8 @@ QOdooPartner::QOdooPartner(QObject* parent) :
 
 void QOdooPartner::fromVariantMap(QVariantMap data)
 {
+  if (!data["id"].isNull())
+    setId(data["id"].toInt());
   _name.first        = data[_name.key].toString();
   _vat.first         = data[_vat.key].toString();
   _phone.first       = data[_phone.key].toString();

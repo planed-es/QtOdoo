@@ -11,46 +11,22 @@
 class QOdooModel : public QObject
 {
   friend class OdooService;
+  Q_OBJECT
+  Q_PROPERTY(int id READ id NOTIFY idChanged)
 public:
   typedef unsigned long IdType;
 
   explicit QOdooModel(QObject* parent = nullptr) : QObject(parent) {}
 
   IdType id() const { return _id; }
-  void setId(IdType value) { _id = value; }
+  void setId(IdType value);
 
   virtual QVariantMap xmlrpcTransaction() const = 0;
   virtual const char* odooTypename() const = 0;
 
-  virtual void save(OdooService& odoo, std::function<void()> callback)
-  {
-    QVariantList params;
-
-    params.push_back(xmlrpcTransaction());
-    if (_id == 0)
-      odoo.createObject(odooTypename(), params, [this, callback](int id) { _id = id; callback(); });
-    else
-      odoo.updateObject(odooTypename(), _id, params, callback);
-  }
-
-  virtual bool hasChanged() const
-  {
-    for (const PropertyInterface* property : _properties)
-    {
-      if (property->hasChanged())
-        return true;
-    }
-    return false;
-  }
-
-  virtual QStringList propertyNames() const
-  {
-    QStringList result;
-
-    for (const PropertyInterface* property : _properties)
-      result << property->key;
-    return result;
-  }
+  virtual void save(OdooService& odoo, std::function<void()> callback);
+  virtual bool hasChanged() const;
+  virtual QStringList propertyNames() const;
 
   struct PropertyInterface
   {
@@ -69,6 +45,9 @@ public:
     Property& operator=(const TYPE& value) { set(value); return *this; }
     bool hasChanged() const override { return this->second; }
   };
+
+signals:
+  void idChanged();
 
 protected:
   struct XmlRpcTransaction : public QVariantMap

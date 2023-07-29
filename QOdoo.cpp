@@ -61,22 +61,47 @@ void OdooService::findObject(const QString& objectType, int id, std::function<vo
 
 void OdooService::findObjects(const QString& objectType, const QOdooSearchQuery& filters, std::function<void(QVariant)> callback)
 {
+  objectsOperation("search_read", objectType, filters, callback);
+}
+
+void OdooService::countObjects(const QString& objectType, const QOdooSearchQuery& filters, std::function<void(QVariant)> callback)
+{
+  objectsOperation("search_count", objectType, filters, callback);
+}
+
+void OdooService::objectsOperation(const QString& operation, const QString& objectType, const QOdooSearchQuery& filters, std::function<void(QVariant)> callback)
+{
   QVariantList params;
-  QVariantList wrapper, wrapperWrapper, wrapperWrapperWrapper;
+  QVariantList wrapper;
   QVariantMap keyParameters;
 
   wrapper.push_back(filters.params);
-  wrapperWrapper.push_back(wrapper);
-  wrapperWrapperWrapper.push_back(wrapperWrapper);
-  params << objectType << "search_read";
-  params.push_back(wrapperWrapperWrapper);
-  keyParameters.insert("fields", QVariant::fromValue(filters._fields));
-  if (filters._offset > 0)
-    keyParameters.insert("offset", QVariant::fromValue(filters._offset));
-  if (filters._limit > 0)
-    keyParameters.insert("limit", QVariant::fromValue(filters._limit));
-  if (keyParameters.keys().size() > 0)
-    params.push_back(keyParameters);
+  params << objectType << operation;
+  params.push_back(wrapper);
+  if (operation != "search_count")
+  {
+    keyParameters.insert("fields", QVariant::fromValue(filters._fields));
+    if (filters._offset > 0)
+      keyParameters.insert("offset", QVariant::fromValue(filters._offset));
+    if (filters._limit > 0)
+      keyParameters.insert("limit", QVariant::fromValue(filters._limit));
+    if (keyParameters.keys().size() > 0)
+      params.push_back(keyParameters);
+  }
+  execute_kw(params, callback);
+}
+
+void OdooService::findObjects(const QString& objectType, const QVector<unsigned long>& ids, const QStringList& fields, std::function<void(QVariant)> callback)
+{
+  QVariantList params, idsParam;
+  QVariantMap keyParameters;
+
+  keyParameters.insert("fields", QVariant::fromValue(fields));
+  for (unsigned long id : ids)
+    idsParam << QVariant::fromValue(id);
+  params << objectType << "read";
+  params.push_back(idsParam);
+  params << fields;
   execute_kw(params, callback);
 }
 

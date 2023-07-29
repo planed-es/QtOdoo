@@ -6,14 +6,18 @@
 class QOdooCollectionInterface : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(unsigned long limit READ limit WRITE setLimit NOTIFY queryChanged)
-  Q_PROPERTY(unsigned long page  READ page  WRITE setPage NOTIFY queryChanged)
+  Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY queryChanged)
+  Q_PROPERTY(int page  READ page  WRITE setPage NOTIFY queryChanged)
+  Q_PROPERTY(int count READ count NOTIFY countChanged)
+  Q_PROPERTY(int pageCount READ pageCount NOTIFY pageCountChanged)
 public:
   QOdooCollectionInterface(QObject* parent = nullptr);
 
   void setQuery(const QOdooSearchQuery& value) { _query = value; emit queryChanged(); }
-  unsigned long limit() const { return _query.getLimit(); }
-  unsigned long page() const { return _query.getOffset() / limit(); }
+  int limit() const { return _query.getLimit(); }
+  int page() const { return _query.getOffset() / limit(); }
+  int count() const { return _count; }
+  int pageCount() const { return 1 + _count / limit(); }
   void setLimit(unsigned long value) { _query.limit(value); emit queryChanged(); }
   void setPage(unsigned long page) { _query.offset(limit() * page); emit queryChanged(); }
   std::size_t size() const { return _models.size(); }
@@ -21,6 +25,8 @@ public:
 signals:
   void modelsChanged();
   void queryChanged();
+  void countChanged();
+  void pageCountChanged();
 
 protected slots:
   virtual void onQueryChanged() = 0;
@@ -28,6 +34,7 @@ protected slots:
 protected:
   QList<QOdooModel*> _models;
   QOdooSearchQuery   _query;
+  int                _count = 0;
 };
 
 template<typename MODEL>
@@ -100,6 +107,21 @@ public:
 
 protected:
   void onQueryChanged() override
+  {
+    fetchCount();
+    fetchModels();
+  }
+
+  void fetchCount()
+  {
+    service.count<MODEL>(QOdooCollectionInterface::_query, [this](unsigned long value)
+    {
+      QOdooCollectionInterface::_count = value;
+      emit countChanged();
+    });
+  }
+
+  void fetchModels()
   {
     service.fetch<MODEL>(QOdooCollectionInterface::_query, [this](QVector<MODEL*> results)
     {

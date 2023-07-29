@@ -33,6 +33,19 @@ public:
   }
 
   template<typename MODEL>
+  void count(const QOdooSearchQuery& query, std::function<void(unsigned long)> callback)
+  {
+    countObjects(MODEL().odooTypename(), query, [this, callback](QVariant result)
+    {
+      unsigned long value = 0;
+
+      if (!QXMLRpcFault::isFault(result))
+        value = result.toULongLong();
+      callback(value);
+    });
+  }
+
+  template<typename MODEL>
   void fetch(QVector<unsigned long> ids, std::function<void(QVector<MODEL*>)> callback)
   {
     fetch(ids, MODEL().propertyNames(), callback);
@@ -81,8 +94,8 @@ public:
         MODEL* model = new MODEL(this);
         QVariantMap data = result.toMap();
 
-        model->_id = id;
         model->fromVariantMap(data);
+        model->setId(id);
         model->fetchRelationships(*this, data, [callback, model]() { callback(model); });
       }
       else
@@ -97,7 +110,7 @@ public:
 
     params.push_back(model.xmlrpcTransaction());
     if (model.id() == 0)
-      createObject(model.odooTypename(), params, [this, &model, callback](int id) { model._id = id; callback(); });
+      createObject(model.odooTypename(), params, [this, &model, callback](int id) { model.setId(id); callback(); });
     else
       updateObject(model.odooTypename(), model.id(), params, callback);
   }
@@ -114,11 +127,15 @@ public:
   void findObject(const QString& objectType, int id, std::function<void(QVariant)> callback);
   void findObject(const QString& objectType, int id, const QStringList& fields, std::function<void(QVariant)> callback);
   void findObjects(const QString& objectType, const QOdooSearchQuery& query, std::function<void(QVariant)> callback);
+  void findObjects(const QString& objectType, const QVector<unsigned long>& ids, const QStringList& fields, std::function<void(QVariant)> callback);
+  void countObjects(const QString& objectType, const QOdooSearchQuery& query, std::function<void(QVariant)> callback);
   void createObject(const QString& objectType, const QVariantList& data, std::function<void(int)> callback);
   void updateObject(const QString& objectType, int id, const QVariantList& data, std::function<void()> callback);
   void deleteObject(const QString& objectType, int id, std::function<void()> callback);
 
 private:
+  void objectsOperation(const QString& operation, const QString& objectType, const QOdooSearchQuery& query, std::function<void(QVariant)> callback);
+
   QUrl          url;
   QXMLRpcClient xmlrpc;
   int           uid;

@@ -172,6 +172,7 @@ void QOdooInvoice::fetchRelationships(OdooService& odoo, QVariantMap data, std::
       line->setParent(this);
       _lines << line;
     }
+    callback();
   });
 }
 

@@ -29,7 +29,7 @@ static QOdooProduct::ProductType readProductType(const QVariant& value)
 QOdooProduct::QOdooProduct(QObject* parent) :
   QOdooModel(parent),
   _name("name"), _defaultCode("default_code"), _barCode("barcode"),
-  _productType("product_type", NoProductType),
+  _productType("detailed_type", NoProductType),
   _standardPrice("standard_price", 0.f),
   _lstPrice("lst_price", 0.f),
   _taxIds("taxes_ids")
@@ -59,6 +59,8 @@ void QOdooProduct::fetch(OdooService& odoo, IdType id, std::function<void()> cal
 
 void QOdooProduct::fromVariantMap(QVariantMap data)
 {
+  if (!data["id"].isNull())
+    setId(data["id"].toInt());
   _name.first    = data[_name.key].toString();
   _defaultCode   = data[_defaultCode.key].toString();
   _barCode       = data[_barCode.key].toString();
