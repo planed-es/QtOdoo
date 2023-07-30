@@ -62,55 +62,7 @@ QOdooInvoiceLine* QOdooInvoice::lineAt(unsigned short index)
     _lines.push_back(new QOdooInvoiceLine(this));
   return _lines[index];
 }
-/*
-static void fetchNextLine(QOdooInvoice* invoice, QVector<QOdooInvoiceLine*>& lines, OdooService& odoo, QVector<int> ids, std::function<void()> callback)
-{
-  auto lineId = ids.takeFirst();
 
-  odoo.findObject(QOdooInvoiceLine().odooTypename(), lineId, QOdooInvoiceLine().propertyNames(), [invoice, &lines, &odoo, ids, callback](QVariant result)
-  {
-    if (!(QXMLRpcFault::isFault(result)))
-    {
-      auto* line = new QOdooInvoiceLine(invoice);
-
-      lines << line;
-      line->fromVariantMap(result.toMap());
-      if (ids.size() == 0)
-        callback();
-      else
-        fetchNextLine(invoice, lines, odoo, ids, callback);
-    }
-    else
-      callback();
-  });
-}
-
-void QOdooInvoice::fetch(OdooService& odoo, IdType id, std::function<void()> callback)
-{
-  if (id == 0)
-  {
-    callback();
-    return ;
-  }
-  odoo.findObject(odooTypename(), id, propertyNames(), [this, &odoo, id, callback](QVariant result)
-  {
-    if (!QXMLRpcFault::isFault(result))
-    {
-      QVariantMap data = result.toMap();
-      _id = id;
-      qDebug() << "Result being: " << data;
-      fromVariantMap(data);
-      fetchNextLine(this, _lines, odoo, readInvoiceLineIds(data["invoice_line_ids"]), [this, callback]()
-      {
-        qDebug() << "FETCHED LINES" << _lines;
-        callback();
-      });
-    }
-    else
-      callback();
-  });
-}
-*/
 void QOdooInvoice::fetchRelationships(OdooService& odoo, QVariantMap data, std::function<void ()> callback)
 {
   QList<unsigned long> lineIds = readInvoiceLineIds(data["invoice_line_ids"]);
