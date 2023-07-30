@@ -31,7 +31,7 @@ class QOdooSearchQuery
     template<typename TYPE>
     QOdooSearchQuery& operator==(TYPE comparator)
     {
-      return compare('=', comparator);
+      return compare("=", comparator);
     }
 
     template<typename TYPE>
@@ -43,13 +43,13 @@ class QOdooSearchQuery
     template<typename TYPE>
     QOdooSearchQuery& operator>(TYPE comparator)
     {
-      return compare('>', comparator);
+      return compare(">", comparator);
     }
 
     template<typename TYPE>
     QOdooSearchQuery& operator<(TYPE comparator)
     {
-      return compare('<', comparator);
+      return compare("<", comparator);
     }
 
     template<typename TYPE>
