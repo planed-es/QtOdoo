@@ -21,6 +21,7 @@ set(source_files
 	QOdooPartner.cpp
 	QOdooInvoice.cpp
 	QOdooInvoiceLine.cpp
+	QOdooTax.cpp
 	QOdooCollection.cpp)
 set(header_files
 	QOdoo.h
