@@ -29,9 +29,11 @@ set(header_files
 	QOdooPartner.h
 	QOdooInvoice.h
 	QOdooInvoiceLine.h
+	QOdooTax.h
 	QOdooCollection.h
-        QOdooModel.h
-        QOdooSearchQuery.h)
+	QOdooModel.h
+	QOdooEnum.h
+	QOdooSearchQuery.h)
 
 add_library(QtOdoo SHARED ${source_files} ${header_files})
 target_link_libraries(QtOdoo PRIVATE

@@ -1,29 +1,21 @@
 #include "QOdooInvoice.h"
 
-static QOdooInvoice::MoveType readMoveType(QVariant value)
-{
-  QString name = value.toString();
-  if (name == "in_invoice") return QOdooInvoice::IncomingInvoice;
-  else if (name == "out_invoice") return QOdooInvoice::OutgoingInvoice;
-  return QOdooInvoice::NoMoveType;
-}
+static const ODOO_ENUM_BEGIN(moveTypes, QOdooInvoice::MoveType, QString, QOdooInvoice::NoMoveType)
+  {QOdooInvoice::IncomingInvoice, "in_invoice"},
+  {QOdooInvoice::OutgoingInvoice, "out_invoice"}
+ODOO_ENUM_END()
 
-static QOdooInvoice::State readState(QVariant value)
-{
-  QString name = value.toString();
-  if (name == "posted") return QOdooInvoice::PostedState;
-  else if (name == "draft") return QOdooInvoice::DraftState;
-  else if (name == "cancel") return QOdooInvoice::CanceledState;
-  return QOdooInvoice::NoState;
-}
+static const ODOO_ENUM_BEGIN(states, QOdooInvoice::State, QString, QOdooInvoice::DraftState)
+  {QOdooInvoice::PostedState,   "posted"},
+  {QOdooInvoice::DraftState,    "draft"},
+  {QOdooInvoice::CanceledState, "cancel"}
+ODOO_ENUM_END()
 
-static QOdooInvoice::PaymentState readPaymentState(QVariant value)
-{
-  QString name = value.toString();
-  if (name == "paid") return QOdooInvoice::Paid;
-  else if (name == "partial") return QOdooInvoice::PartiallyPaid;
-  return QOdooInvoice::NotPaid;
-}
+static const ODOO_ENUM_BEGIN(paymentStates, QOdooInvoice::PaymentState, QString, QOdooInvoice::NotPaid)
+  {QOdooInvoice::Paid,          "paid"},
+  {QOdooInvoice::PartiallyPaid, "partial"},
+  {QOdooInvoice::NotPaid,       "not_paid"}
+ODOO_ENUM_END()
 
 static QList<unsigned long> readInvoiceLineIds(QVariant value)
 {
@@ -32,48 +24,6 @@ static QList<unsigned long> readInvoiceLineIds(QVariant value)
   for (QVariant item : value.toList())
     result.push_back(item.toULongLong());
   return result;
-}
-
-static QString paymentStateToString(const QOdooModel::Property<QOdooInvoice::PaymentState>& property)
-{
-  switch (property.first)
-  {
-    case QOdooInvoice::PartiallyPaid:
-      return "partial";
-    case QOdooInvoice::Paid:
-      return "paid";
-    default:
-      break ;
-  }
-  return "not_paid";
-}
-
-static QString moveTypeToString(const QOdooModel::Property<QOdooInvoice::MoveType>& property)
-{
-  switch (property.first)
-  {
-    case QOdooInvoice::IncomingInvoice:
-      return "in_invoice";
-    case QOdooInvoice::OutgoingInvoice:
-      return "out_invoice";
-    default:
-      break ;
-  }
-  return "in_invoice";
-}
-
-static QString stateToString(const QOdooModel::Property<QOdooInvoice::State>& property)
-{
-  switch (property.first)
-  {
-    case QOdooInvoice::PostedState:
-      return "posted";
-    case QOdooInvoice::CanceledState:
-      return "cancel";
-    default:
-      break ;
-  }
-  return "draft";
 }
 
 QOdooInvoice::QOdooInvoice(QObject* parent) :
@@ -95,9 +45,9 @@ void QOdooInvoice::fromVariantMap(QVariantMap data)
   _name.first             = data[_name.key].toString();
   _ref.first              = data[_ref.key].toString();
   _paymentReference.first = data[_paymentReference.key].toString();
-  _paymentState.first     = readPaymentState(data[_paymentState.key]);
-  _moveType.first         = readMoveType(data[_moveType.key]);
-  _state.first            = readState(data[_state.key]);
+  _paymentState.first     = paymentStates.fromValue(data[_paymentState.key].toString());
+  _moveType.first         = moveTypes.fromValue(data[_moveType.key].toString());
+  _state.first            = states.fromValue(data[_state.key].toString());
   _date.first             = QDate::fromString(data[_date.key].toString(), "yyyy-MM-dd");
   _invoiceDate.first      = QDate::fromString(data[_invoiceDate.key].toString(), "yyyy-MM-dd");
   _invoiceDateDue.first   = QDate::fromString(data[_invoiceDateDue.key].toString(), "yyyy-MM-dd");
@@ -183,9 +133,9 @@ QVariantMap QOdooInvoice::xmlrpcTransaction() const
   transaction.addProperty(_name);
   transaction.addProperty(_ref);
   transaction.addProperty(_paymentReference);
-  transaction.addProperty<PaymentState, QString>(_paymentState, std::bind(&paymentStateToString, std::placeholders::_1));
-  transaction.addProperty<MoveType, QString>(_moveType, std::bind(&moveTypeToString, std::placeholders::_1));
-  transaction.addProperty<State, QString>(_state, std::bind(&stateToString, std::placeholders::_1));
+  transaction.addProperty<PaymentState, QString>(_paymentState, paymentStates.propertyUpdater());
+  transaction.addProperty<MoveType, QString>(_moveType, moveTypes.propertyUpdater());
+  transaction.addProperty<State, QString>(_state, states.propertyUpdater());
   transaction.addProperty(_date);
   transaction.addProperty(_invoiceDate);
   transaction.addProperty(_invoiceDateDue);

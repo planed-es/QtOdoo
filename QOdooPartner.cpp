@@ -1,29 +1,9 @@
 #include "QOdooPartner.h"
 
-static const QMap<QOdooPartner::CompanyType, QString> companyTypeMap{
+static const ODOO_ENUM_BEGIN(companyTypes, QOdooPartner::CompanyType, QString, QOdooPartner::NoCompanyType)
   {QOdooPartner::Company, "company"},
   {QOdooPartner::Individual, ""} // TODO find the string value for this
-};
-
-static QString companyTypeToString(const QOdooModel::Property<QOdooPartner::CompanyType>& property)
-{
-  auto it = companyTypeMap.find(property.first);
-
-  if (it != companyTypeMap.end())
-    return *it;
-  return "";
-}
-
-static QOdooPartner::CompanyType readCompanyType(QVariant value)
-{
-  QString symbol = value.toString();
-  for (auto it = companyTypeMap.begin() ; it != companyTypeMap.end() ; ++it)
-  {
-    if (it.value() == symbol)
-      return it.key();
-  }
-  return QOdooPartner::NoCompanyType;
-}
+ODOO_ENUM_END()
 
 QOdooPartner::QOdooPartner(QObject* parent) :
   QOdooModel(parent),
@@ -46,7 +26,7 @@ void QOdooPartner::fromVariantMap(QVariantMap data)
   _city.first        = data[_city.key].toString();
   _street.first      = data[_street.key].toString();
   _zip.first         = data[_zip.key].toString();
-  _companyType.first = readCompanyType(data[_companyType.key]);
+  _companyType.first = companyTypes.fromValue(data[_companyType.key].toString());
   _comment.first     = data[_comment.key].toString();
 }
 
@@ -60,7 +40,7 @@ QVariantMap QOdooPartner::xmlrpcTransaction() const
   transaction.addProperty(_city);
   transaction.addProperty(_street);
   transaction.addProperty(_zip);
-  transaction.addProperty<CompanyType, QString>(_companyType, &companyTypeToString);
+  transaction.addProperty<CompanyType, QString>(_companyType, companyTypes.propertyUpdater());
   transaction.addProperty(_comment);
   return transaction;
 }

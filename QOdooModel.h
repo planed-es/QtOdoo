@@ -107,4 +107,6 @@ protected:
   IdType _id = 0;
 };
 
+# include "QOdooEnum.h"
+
 #endif

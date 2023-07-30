@@ -1,30 +1,9 @@
 #include "QOdooProduct.h"
 
-static const QMap<QOdooProduct::ProductType, QString> productTypes{
+static const ODOO_ENUM_BEGIN(productTypes, QOdooProduct::ProductType, QString, QOdooProduct::NoProductType)
   {QOdooProduct::Consumible, "consu"},
   {QOdooProduct::Service,    "service"}
-};
-
-static QString productTypeToString(const QOdooModel::Property<QOdooProduct::ProductType>& property)
-{
-  auto it = productTypes.find(*property);
-
-  if (it != productTypes.end())
-    return *it;
-  return QString();
-}
-
-static QOdooProduct::ProductType readProductType(const QVariant& value)
-{
-  QString symbol = value.toString();
-
-  for (auto it = productTypes.begin() ; it != productTypes.end() ; ++it)
-  {
-    if (it.value() == symbol)
-      return it.key();
-  }
-  return QOdooProduct::NoProductType;
-}
+ODOO_ENUM_END()
 
 QOdooProduct::QOdooProduct(QObject* parent) :
   QOdooModel(parent),
@@ -64,7 +43,7 @@ void QOdooProduct::fromVariantMap(QVariantMap data)
   _name.first    = data[_name.key].toString();
   _defaultCode   = data[_defaultCode.key].toString();
   _barCode       = data[_barCode.key].toString();
-  _productType   = readProductType(data[_productType.key]);
+  _productType   = productTypes.fromValue(data[_productType.key].toString());
   _standardPrice = data[_standardPrice.key].toFloat();
   _lstPrice      = data[_lstPrice.key].toFloat();
   _taxIds        = data[_taxIds.key].toList();
@@ -77,7 +56,7 @@ QVariantMap QOdooProduct::xmlrpcTransaction() const
   transaction.addProperty(_name);
   transaction.addProperty(_defaultCode);
   transaction.addProperty(_barCode);
-  transaction.addProperty<ProductType, QString>(_productType, std::bind(&productTypeToString, std::placeholders::_1));
+  transaction.addProperty<ProductType, QString>(_productType, productTypes.propertyUpdater());
   transaction.addProperty(_standardPrice);
   transaction.addProperty(_lstPrice);
   transaction.addProperty(_taxIds);
