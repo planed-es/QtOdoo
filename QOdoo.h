@@ -4,6 +4,7 @@
 #include <QXMLRpc.h>
 #include <QStringList>
 #include "QOdooSearchQuery.h"
+#include "QOdooModel.h"
 
 class OdooService : public QObject
 {
@@ -103,20 +104,18 @@ public:
     });
   }
 
-  template<typename MODEL>
-  void save(MODEL& model, std::function<void()> callback)
+  void save(QOdooModel& model, std::function<void()> callback)
   {
     QVariantList params;
 
     params.push_back(model.xmlrpcTransaction());
     if (model.id() == 0)
-      createObject(model.odooTypename(), params, [this, &model, callback](int id) { model.setId(id); callback(); });
+      createObject(model.odooTypename(), params, [this, &model, callback](int id) { model.setId(id); model.onSaved(); callback(); });
     else
-      updateObject(model.odooTypename(), model.id(), params, callback);
+      updateObject(model.odooTypename(), model.id(), params, [&model, callback]() { model.onSaved(); callback(); });
   }
 
-  template<typename MODEL>
-  void destroy(MODEL& model, std::function<void()> callback)
+  void destroy(const QOdooModel& model, std::function<void()> callback)
   {
     deleteObject(model.odooTypename(), model.id(), callback);
   }

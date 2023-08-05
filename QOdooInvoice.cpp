@@ -1,4 +1,5 @@
 #include "QOdooInvoice.h"
+#include "QOdoo.h"
 
 static const ODOO_ENUM_BEGIN(moveTypes, QOdooInvoice::MoveType, QString, QOdooInvoice::NoMoveType)
   {QOdooInvoice::IncomingInvoice, "in_invoice"},
@@ -28,16 +29,16 @@ static QList<unsigned long> readInvoiceLineIds(QVariant value)
 
 QOdooInvoice::QOdooInvoice(QObject* parent) :
   QOdooModel(parent),
-  _name("name"), _ref("ref"),
-  _paymentReference("payment_reference"), _paymentState("payment_state", NotPaid),
-  _moveType("move_type", NoMoveType), _state("state", NoState),
+  _name("name"), _ref("ref"), _paymentReference("payment_reference"), _narration("narration"),
+  _paymentState("payment_state", NotPaid), _moveType("move_type", NoMoveType), _state("state", NoState),
   _date("date"), _invoiceDate("invoice_date"), _invoiceDateDue("invoice_date_due"),
   _partnerId("partner_id", 0), _journalId("journal_id", 0), _partnerBankId("partner_bank_id", 0)
 {
   _properties << &_name << &_ref
     << &_paymentReference << &_paymentState
     << &_moveType << &_state << &_date << &_invoiceDate << &_invoiceDateDue
-    << &_partnerId << &_partnerBankId << &_journalId;
+    << &_partnerId << &_partnerBankId << &_journalId
+    << &_narration;
 }
 
 void QOdooInvoice::fromVariantMap(QVariantMap data)
@@ -54,6 +55,13 @@ void QOdooInvoice::fromVariantMap(QVariantMap data)
   _partnerId.first        = data[_partnerId.key].toInt();
   _partnerBankId.first    = data[_partnerBankId.key].toInt();
   _journalId.first        = data[_journalId.key].toInt();
+}
+
+void QOdooInvoice::onSaved()
+{
+  QOdooModel::onSaved();
+  for (QOdooInvoiceLine* line : _lines)
+    line->onSaved();
 }
 
 QOdooInvoiceLine* QOdooInvoice::lineAt(unsigned short index)
@@ -94,6 +102,7 @@ QVariantMap QOdooInvoice::xmlrpcTransaction() const
   transaction.addProperty(_partnerId);
   transaction.addProperty(_partnerBankId);
   transaction.addProperty(_journalId);
+  transaction.addProperty(_narration);
   transaction.addRelationship("invoice_line_ids", _lines);
   return transaction;
 }

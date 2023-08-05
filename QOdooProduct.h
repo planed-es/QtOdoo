@@ -29,9 +29,9 @@ public:
   void fetch(OdooService&, IdType id, std::function<void()> callback);
   void fromVariantMap(QVariantMap data);
 
-  const QString& name() const { return *_name; }
-  const QString& defaultCode() const { return *_defaultCode; }
-  const QString& barcode() const { return *_barCode; }
+  QString name() const { return *_name; }
+  QString defaultCode() const { return *_defaultCode; }
+  QString barcode() const { return *_barCode; }
   ProductType productType() const { return *_productType; }
   float standardPrice() const { return *_standardPrice; }
   float lstPrice() const { return *_lstPrice; }

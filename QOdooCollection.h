@@ -1,7 +1,9 @@
 #ifndef  QODOO_COLLECTION_H
 # define QODOO_COLLECTION_H
 
+# include "QOdooSearchQuery.h"
 # include "QOdooModel.h"
+# include "QOdoo.h"
 
 class QOdooCollectionInterface : public QObject
 {

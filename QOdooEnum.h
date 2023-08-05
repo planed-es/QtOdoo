@@ -31,7 +31,7 @@ struct OdooEnum : public QMap<ENUM, VALUE>
   {
     return [this](const QOdooModel::Property<ENUM>& property) -> VALUE
     {
-      return fromEnum(property.first);
+      return fromEnum(property.first.value_or(NULL_VALUE));
     };
   }
 };

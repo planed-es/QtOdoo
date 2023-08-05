@@ -1,4 +1,5 @@
 #include "QOdooProduct.h"
+#include "QOdoo.h"
 
 static const ODOO_ENUM_BEGIN(productTypes, QOdooProduct::ProductType, QString, QOdooProduct::NoProductType)
   {QOdooProduct::Consumible, "consu"},

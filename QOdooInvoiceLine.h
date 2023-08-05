@@ -19,12 +19,12 @@ public:
 
   void fromVariantMap(QVariantMap data);
 
-  const QString& name() const { return _name.first; }
-  IdType accountId() const { return _accountId.first; }
-  IdType productId() const { return _productId.first; }
-  unsigned int quantity() const { return _quantity.first; }
-  double priceUnit() const { return _priceUnit.first; }
-  QVariantList taxIds() const { return _taxIds.first; }
+  QString name() const { return *_name; }
+  IdType accountId() const { return *_accountId; }
+  IdType productId() const { return *_productId; }
+  unsigned int quantity() const { return *_quantity; }
+  double priceUnit() const { return *_priceUnit; }
+  QVariantList taxIds() const { return _taxIds.first.value_or(QVariantList()); }
 
   void setName(const QString& value) { _name.set(value); }
   void setAccountId(IdType value) { _accountId.set(value); }
@@ -37,7 +37,7 @@ protected:
   QVariantMap xmlrpcTransaction() const override;
 
 private:
-  Property<QString>      _name;
+  StringProperty         _name;
   Property<IdType>       _accountId, _productId;
   Property<unsigned int> _quantity;
   Property<double>       _priceUnit;

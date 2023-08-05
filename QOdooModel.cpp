@@ -1,4 +1,5 @@
 #include "QOdooModel.h"
+#include "QOdoo.h"
 
 void QOdooModel::setId(IdType value)
 {
@@ -9,12 +10,23 @@ void QOdooModel::setId(IdType value)
 void QOdooModel::save(OdooService& odoo, std::function<void()> callback)
 {
   QVariantList params;
+  std::function<void()> callbacks = [this, callback]()
+  {
+    onSaved();
+    callback();
+  };
 
   params.push_back(xmlrpcTransaction());
   if (_id == 0)
-    odoo.createObject(odooTypename(), params, [this, callback](int id) { _id = id; callback(); });
+    odoo.createObject(odooTypename(), params, [this, callbacks](int id) { _id = id; callbacks(); });
   else
-    odoo.updateObject(odooTypename(), _id, params, callback);
+    odoo.updateObject(odooTypename(), _id, params, callbacks);
+}
+
+void QOdooModel::onSaved()
+{
+  for (PropertyInterface* property : _properties)
+    property->resetState();
 }
 
 bool QOdooModel::hasChanged() const

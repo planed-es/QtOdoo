@@ -53,8 +53,8 @@ public:
 
   void fromVariantMap(QVariantMap data);
 
-  const QString& name() const { return *_name; }
-  const QString& description() const { return *_description; }
+  QString name() const { return *_name; }
+  QString description() const { return *_description; }
   TaxType typeTaxUse() const { return *_typeTaxUse; }
   AmountType amountType() const { return *_amountType; }
   TaxScope taxScope() const { return *_taxScope; }
@@ -79,7 +79,7 @@ protected:
   QVariantMap xmlrpcTransaction() const override;
 
 private:
-  Property<QString>    _name, _description;
+  StringProperty       _name, _description;
   Property<TaxType>    _typeTaxUse;
   Property<AmountType> _amountType;
   Property<TaxScope>   _taxScope;

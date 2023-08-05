@@ -18,6 +18,7 @@ class QOdooInvoice : public QOdooModel
   Q_PROPERTY(IdType   partnerId READ partnerId WRITE setPartnerId)
   Q_PROPERTY(IdType   partnerBankId READ partnerBankId WRITE setPartnerBankId)
   Q_PROPERTY(IdType   journalId READ journalId WRITE setJournalId)
+  Q_PROPERTY(QString  narration READ narration WRITE setNarration)
 public:
   const char* odooTypename() const override { return "account.move"; }
 
@@ -50,6 +51,7 @@ public:
 
   //void fetch(OdooService& odoo, IdType id, std::function<void()> callback);
   void fromVariantMap(QVariantMap data);
+  void onSaved() override;
 
   void setName(const QString& value) { _name.set(value); }
   void setRef(const QString& value) { _ref.set(value); }
@@ -63,19 +65,21 @@ public:
   void setPartnerId(IdType value) { _partnerId.set(value); }
   void setPartnerBankId(IdType value) { _partnerBankId.set(value); }
   void setJournalId(IdType value) { _journalId.set(value); }
+  void setNarration(const QString& value) { _narration.set(value); }
 
-  const QString& name() const { return *_name; }
-  const QString& ref() const { return *_ref; }
-  const QString& paymentReference() const { return *_paymentReference; }
+  QString        name() const { return *_name; }
+  QString        ref() const { return *_ref; }
+  QString        paymentReference() const { return *_paymentReference; }
   PaymentState   paymentState() const { return *_paymentState; }
   MoveType       moveType() const { return *_moveType; }
   State          state() const { return *_state; }
-  QDate          date() const { return *_date; }
-  QDate          invoiceDate() const { return *_invoiceDate; }
-  QDate          invoiceDateDue() const { return *_invoiceDateDue; }
+  QDate          date() const { return _date.first.value_or(QDate()); }
+  QDate          invoiceDate() const { return _invoiceDate.first.value_or(QDate()); }
+  QDate          invoiceDateDue() const { return _invoiceDateDue.first.value_or(QDate()); }
   IdType         partnerId() const { return *_partnerId; }
   IdType         partnerBankId() const { return *_partnerBankId; }
   IdType         journalId() const { return *_journalId; }
+  QString        narration() const { return *_narration; }
 
   QOdooInvoiceLine* lineAt(unsigned short index);
 
@@ -89,7 +93,7 @@ protected:
   void fetchRelationships(OdooService&, QVariantMap , std::function<void ()> callback) override;
 
 private:
-  Property<QString>          _name, _ref, _paymentReference;
+  StringProperty             _name, _ref, _paymentReference, _narration;
   Property<PaymentState>     _paymentState;
   Property<MoveType>         _moveType;
   Property<State>            _state;
