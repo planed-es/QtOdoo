@@ -19,6 +19,7 @@ set(source_files
 	QOdooModel.cpp
 	QOdooProduct.cpp
 	QOdooPartner.cpp
+	QOdooAccount.cpp
 	QOdooInvoice.cpp
 	QOdooInvoiceLine.cpp
 	QOdooTax.cpp
@@ -28,6 +29,7 @@ set(header_files
 	QOdooProduct.h
 	QOdooProductTemplate.h
 	QOdooPartner.h
+	QOdooAccount.h
 	QOdooInvoice.h
 	QOdooInvoiceLine.h
 	QOdooTax.h
