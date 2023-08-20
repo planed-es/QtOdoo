@@ -63,7 +63,8 @@ public:
 
   typedef iterator const_iterator;
 
-  QOdooCollection(OdooService& service, QObject* parent = nullptr) : QOdooCollectionInterface(parent), service(service)
+  QOdooCollection(OdooService& service, QObject* parent = nullptr)
+    : QOdooCollectionInterface(parent ? parent : &service), service(service)
   {
   }
 
