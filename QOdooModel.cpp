@@ -1,6 +1,10 @@
 #include "QOdooModel.h"
 #include "QOdoo.h"
 
+QOdooModel::~QOdooModel()
+{
+}
+
 void QOdooModel::setId(IdType value)
 {
   _id = value;
@@ -46,4 +50,28 @@ QStringList QOdooModel::propertyNames() const
   for (const PropertyInterface* property : _properties)
     result << property->key;
   return result;
+}
+
+void QOdooModel::IdProperty::loadFromVariant(QVariant value)
+{
+  if (!value.isNull())
+  {
+    switch (value.typeId())
+    {
+    case QMetaType::QVariantList:
+      first = value.toList().first().toULongLong();
+      break ;
+    case QMetaType::Int:
+    case QMetaType::UInt:
+    case QMetaType::Long:
+    case QMetaType::LongLong:
+    case QMetaType::ULong:
+    case QMetaType::ULongLong:
+      first = value.toULongLong();
+      break ;
+    default:
+      qDebug() << "Could not load IdProperty" << key << "from value" << value;
+      break ;
+    }
+  }
 }

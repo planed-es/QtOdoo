@@ -81,12 +81,18 @@ public:
   IdType         journalId() const { return *_journalId; }
   QString        narration() const { return *_narration; }
 
+  std::size_t       lineCount() const { return _lines.size(); }
   QOdooInvoiceLine* lineAt(unsigned short index);
+  void              deleteLineAt(unsigned short index);
 
   QStringList propertyNames() const override
   {
     return QOdooModel::propertyNames() << "invoice_line_ids";
   }
+
+  static QString valueFor(MoveType);
+  static QString valueFor(State);
+  static QString valueFor(PaymentState);
 
 protected:
   QVariantMap xmlrpcTransaction() const override;
@@ -98,8 +104,8 @@ private:
   Property<MoveType>         _moveType;
   Property<State>            _state;
   Property<QDate>            _date, _invoiceDate, _invoiceDateDue;
-  Property<IdType>           _partnerId, _partnerBankId;
-  Property<IdType>           _journalId;
+  IdProperty                 _partnerId, _partnerBankId;
+  IdProperty                 _journalId;
   QVector<QOdooInvoiceLine*> _lines;
 };
 

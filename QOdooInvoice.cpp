@@ -18,6 +18,10 @@ static const ODOO_ENUM_BEGIN(paymentStates, QOdooInvoice::PaymentState, QString,
   {QOdooInvoice::NotPaid,       "not_paid"}
 ODOO_ENUM_END()
 
+QString QOdooInvoice::valueFor(QOdooInvoice::MoveType value) { return moveTypes.fromEnum(value); }
+QString QOdooInvoice::valueFor(QOdooInvoice::State value) { return states.fromEnum(value); }
+QString QOdooInvoice::valueFor(QOdooInvoice::PaymentState value) { return paymentStates.fromEnum(value); }
+
 static QList<unsigned long> readInvoiceLineIds(QVariant value)
 {
   QList<unsigned long> result;
@@ -52,7 +56,7 @@ void QOdooInvoice::fromVariantMap(QVariantMap data)
   _date.first             = QDate::fromString(data[_date.key].toString(), "yyyy-MM-dd");
   _invoiceDate.first      = QDate::fromString(data[_invoiceDate.key].toString(), "yyyy-MM-dd");
   _invoiceDateDue.first   = QDate::fromString(data[_invoiceDateDue.key].toString(), "yyyy-MM-dd");
-  _partnerId.first        = data[_partnerId.key].toInt();
+  _partnerId.loadFromVariant(data[_partnerId.key]);
   _partnerBankId.first    = data[_partnerBankId.key].toInt();
   _journalId.first        = data[_journalId.key].toInt();
 }
@@ -71,11 +75,18 @@ QOdooInvoiceLine* QOdooInvoice::lineAt(unsigned short index)
   return _lines[index];
 }
 
+void QOdooInvoice::deleteLineAt(unsigned short index)
+{
+  lineAt(index)->markForDeletion();
+}
+
 void QOdooInvoice::fetchRelationships(OdooService& odoo, QVariantMap data, std::function<void ()> callback)
 {
-  QList<unsigned long> lineIds = readInvoiceLineIds(data["invoice_line_ids"]);
+  QOdooSearchQuery query;
 
-  odoo.fetch<QOdooInvoiceLine>(lineIds, [this, callback](QVector<QOdooInvoiceLine*> fetchedLines)
+  query.fields(QOdooInvoiceLine().propertyNames());
+  query.where("id").in(data["invoice_line_ids"].toList());
+  odoo.fetch<QOdooInvoiceLine>(query, [this, callback](QVector<QOdooInvoiceLine*> fetchedLines)
   {
     for (auto* line : fetchedLines)
     {

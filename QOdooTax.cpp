@@ -18,6 +18,10 @@ static const ODOO_ENUM_BEGIN(amountTypes, QOdooTax::AmountType, QString, QOdooTa
   {QOdooTax::DivisionAmount, "division"}
 ODOO_ENUM_END()
 
+QString QOdooTax::valueFor(TaxType value) { return taxTypes.fromEnum(value); }
+QString QOdooTax::valueFor(TaxScope value) { return taxScopes.fromEnum(value); }
+QString QOdooTax::valueFor(AmountType value) { return amountTypes.fromEnum(value); }
+
 QOdooTax::QOdooTax(QObject* parent) :
   QOdooModel(parent),
   _name("name"), _description("description"),

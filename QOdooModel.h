@@ -20,9 +20,11 @@ public:
   typedef unsigned long IdType;
 
   explicit QOdooModel(QObject* parent = nullptr) : QObject(parent) {}
+  virtual ~QOdooModel();
 
   IdType id() const { return _id; }
   void setId(IdType value);
+  void markForDeletion() { markedForDeletion = true; }
   virtual void onSaved();
 
   virtual QVariantMap xmlrpcTransaction() const = 0;
@@ -60,6 +62,13 @@ public:
     StringProperty(const QString& key) : Property<QString>(key) {}
     StringProperty(const QString& key, const QString& value) : Property<QString>(key, value) {}
     QString operator*() const { return first.value_or(QString()); }
+  };
+
+  struct IdProperty : Property<IdType>
+  {
+    IdProperty(const QString& key) : Property<IdType>(key, 0) {}
+    IdProperty(const QString& key, IdType value) : Property<IdType>(key, value) {}
+    void loadFromVariant(QVariant value);
   };
 
 signals:
@@ -102,10 +111,18 @@ protected:
         {
           QVariantMap transaction = model->xmlrpcTransaction();
 
-          if (item->id() != 0)
-            entry << 4 << QVariant::fromValue(item->id()) << transaction;
+          // IGNORE
+          if (item->markedForDeletion && item->id() == 0)
+            continue ;
+          // DELETE
+          else if (item->markedForDeletion)
+            entry << 2 << QVariant::fromValue(item->id()) << false;
+          // CREATE
+          else if (item->id() == 0)
+            entry << 0 << QVariant::fromValue(item->id()) << transaction;
+          // UPDATE
           else
-            entry << 0 << 0 << transaction;
+            entry << 4 << QVariant::fromValue(item->id()) << transaction;
         }
         else
           entry << 4 << QVariant::fromValue(item->id()) << false;
@@ -121,6 +138,7 @@ protected:
 
   QVector<PropertyInterface*> _properties;
   IdType _id = 0;
+  bool markedForDeletion = false;
 };
 
 # include "QOdooEnum.h"

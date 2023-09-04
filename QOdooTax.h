@@ -30,6 +30,7 @@ public:
     PurchaseTax
   };
   Q_ENUM(TaxType)
+  static QString valueFor(TaxType);
 
   enum AmountType
   {
@@ -40,6 +41,7 @@ public:
     DivisionAmount
   };
   Q_ENUM(AmountType)
+  static QString valueFor(AmountType);
 
   enum TaxScope
   {
@@ -48,6 +50,7 @@ public:
     Service
   };
   Q_ENUM(TaxScope)
+  static QString valueFor(TaxScope);
 
   QOdooTax(QObject* parent = nullptr);
 
