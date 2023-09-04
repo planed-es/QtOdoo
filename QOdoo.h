@@ -17,19 +17,10 @@ public:
   {
     findObjects(MODEL().odooTypename(), query, [this, callback](QVariant results)
     {
-      QVector<MODEL*> models;
-
       if (!QXMLRpcFault::isFault(results))
-      {
-        for (QVariant data : results.toList())
-        {
-          MODEL* model = new MODEL(this);
-
-          model->fromVariantMap(data.toMap());
-          models.push_back(model);
-        }
-      }
-      callback(models);
+        recursivelyProcessReceivedModels<MODEL>({}, results.toList(), callback);
+      else
+        callback({});
     });
   }
 
@@ -134,6 +125,28 @@ public:
 
 private:
   void objectsOperation(const QString& operation, const QString& objectType, const QOdooSearchQuery& query, std::function<void(QVariant)> callback);
+
+  template<typename MODEL>
+  void recursivelyProcessReceivedModels(QVector<MODEL*> models, QVariantList results, std::function<void(QVector<MODEL*>)> callback)
+  {
+    if (results.size())
+    {
+      MODEL* model = new MODEL(this);
+      QVariantMap properties = results.takeFirst().toMap();
+
+      qDebug() << "Recursively processing one model, relationships will be fetched, do not flip";
+      models.push_back(model);
+      model->setId(properties["id"].toULongLong());
+      model->fromVariantMap(properties);
+      model->fetchRelationships(*this, properties, [this, models, results, callback]()
+      {
+        recursivelyProcessReceivedModels(models, results, callback);
+      });
+      //model->fetchRelationships(*this, properties, std::bind(&OdooService::recursivelyProcessReceivedModels, this, models, results, callback));
+    }
+    else
+      callback(models);
+  }
 
   QUrl          url;
   QXMLRpcClient xmlrpc;
