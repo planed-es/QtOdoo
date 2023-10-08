@@ -13,10 +13,13 @@ void OdooService::authenticate(const QString& database, const QString& username,
   xmlrpc.setEndpoint(url);
   xmlrpc.call("authenticate", {
     database, username, password, ""
-  }, [this, callback](QVariant uid)
+  }, [this, callback, database, username, password](QVariant uid)
   {
     this->uid = uid.toInt(0);
-    callback();
+    if (this->uid != 0)
+      callback();
+    else
+      qDebug() << "OdooService::authenticate failed (" << database << ", " << username << ", " << password << ")";
   });
 }
 
