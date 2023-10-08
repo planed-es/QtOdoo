@@ -11,23 +11,28 @@ QOdooPartner::QOdooPartner(QObject* parent) :
   _vat("vat"), _phone("phone"),
   _city("city"), _street("street"), _zip("zip"),
   _companyType("company_type", NoCompanyType),
-  _comment("comment")
+  _comment("comment"),
+  _receivableAccountId("property_account_receivable_id"),
+  _payableAccountId("property_account_payable_id")
 {
-  _properties << &_name << &_vat << &_phone << &_city << &_street << &_zip << &_companyType << &_comment;
+  _properties << &_name << &_vat << &_phone << &_city << &_street << &_zip << &_companyType << &_comment
+              << &_receivableAccountId << &_payableAccountId;
 }
 
 void QOdooPartner::fromVariantMap(QVariantMap data)
 {
   if (!data["id"].isNull())
     setId(data["id"].toInt());
-  _name.first        = data[_name.key].toString();
-  _vat.first         = data[_vat.key].toString();
-  _phone.first       = data[_phone.key].toString();
-  _city.first        = data[_city.key].toString();
-  _street.first      = data[_street.key].toString();
-  _zip.first         = data[_zip.key].toString();
-  _companyType.first = companyTypes.fromValue(data[_companyType.key].toString());
-  _comment.first     = data[_comment.key].toString();
+  _name.first                = data[_name.key].toString();
+  _vat.first                 = data[_vat.key].toString();
+  _phone.first               = data[_phone.key].toString();
+  _city.first                = data[_city.key].toString();
+  _street.first              = data[_street.key].toString();
+  _zip.first                 = data[_zip.key].toString();
+  _companyType.first         = companyTypes.fromValue(data[_companyType.key].toString());
+  _comment.first             = data[_comment.key].toString();
+  _receivableAccountId.loadFromVariant(data[_receivableAccountId.key]);
+  _payableAccountId.loadFromVariant(data[_payableAccountId.key]);
 }
 
 QVariantMap QOdooPartner::xmlrpcTransaction() const
