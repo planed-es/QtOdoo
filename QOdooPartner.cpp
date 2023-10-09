@@ -47,5 +47,7 @@ QVariantMap QOdooPartner::xmlrpcTransaction() const
   transaction.addProperty(_zip);
   transaction.addProperty<CompanyType, QString>(_companyType, companyTypes.propertyUpdater());
   transaction.addProperty(_comment);
+  transaction.addProperty(_receivableAccountId);
+  transaction.addProperty(_payableAccountId);
   return transaction;
 }
