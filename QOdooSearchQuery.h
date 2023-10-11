@@ -18,6 +18,11 @@ class QOdooSearchQuery
     QOdooColumn(QOdooSearchQuery& query, const QString& name) : query(query), name(name)
     {}
 
+    QOdooSearchQuery& compare(QString op, const char* comparator)
+    {
+      return compare(op, QString(comparator));
+    }
+
     template<typename TYPE>
     QOdooSearchQuery& compare(QString op, TYPE comparator)
     {
