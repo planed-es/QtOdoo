@@ -9,7 +9,15 @@ class OdooService;
 class QOdooSearchQuery
 {
   friend class OdooService;
+public:
+  enum LikeOption
+  {
+    CaseSensitive   = 1,
+    CaseInsensitive = 2,
+    ExactMatch      = 4
+  };
 
+private:
   class QOdooColumn
   {
     QOdooSearchQuery& query;
@@ -78,7 +86,22 @@ class QOdooSearchQuery
       query.params.push_back(comp);
       return query;
     }
+
+    QOdooSearchQuery& like(const QString& value, char options = CaseInsensitive)
+    {
+      QVariantList comp;
+      QString operation("like");
+
+      if ((options & CaseInsensitive) > 0)
+        operation = 'i' + operation;
+      if ((options & ExactMatch) > 0)
+        operation = '=' + operation;
+      comp << name << operation << value;
+      query.params.push_back(comp);
+      return query;
+    }
   };
+
 public:
   QOdooSearchQuery() {}
 
