@@ -6,13 +6,15 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(PkgConfig)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Network Xml REQUIRED)
 pkg_check_modules(QTXMLRPC REQUIRED QtXMLRpc>=1.0.0)
+
+message("Using Qt${QT_VERSION_MAJOR}")
 
 set(source_files
 	QOdoo.cpp

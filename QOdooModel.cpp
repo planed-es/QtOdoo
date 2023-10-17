@@ -1,5 +1,6 @@
 #include "QOdooModel.h"
 #include "QOdoo.h"
+#include <QtGlobal>
 
 QOdooModel::~QOdooModel()
 {
@@ -56,7 +57,11 @@ void QOdooModel::IdProperty::loadFromVariant(QVariant value)
 {
   if (!value.isNull())
   {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     switch (value.typeId())
+#else
+    switch (static_cast<QMetaType::Type>(value.type()))
+#endif
     {
     case QMetaType::QVariantList:
       first = value.toList().first().toULongLong();
