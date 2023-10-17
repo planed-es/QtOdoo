@@ -4,6 +4,9 @@
 # include "QOdooSearchQuery.h"
 # include "QOdooModel.h"
 # include "QOdoo.h"
+# ifdef QT_QUICK_LIB
+#  include <QQmlListProperty>
+# endif
 
 class QOdooCollectionInterface : public QObject
 {
@@ -12,6 +15,10 @@ class QOdooCollectionInterface : public QObject
   Q_PROPERTY(int page  READ page  WRITE setPage NOTIFY queryChanged)
   Q_PROPERTY(int count READ count NOTIFY countChanged)
   Q_PROPERTY(int pageCount READ pageCount NOTIFY pageCountChanged)
+# ifdef QT_QUICK_LIB
+  Q_PROPERTY(QQmlListProperty<QOdooModel> models READ models NOTIFY modelsChanged)
+  virtual QQmlListProperty<QOdooModel> models() { return QQmlListProperty<QOdooModel>(this, &_models); }
+# endif
 public:
   QOdooCollectionInterface(QObject* parent = nullptr);
 

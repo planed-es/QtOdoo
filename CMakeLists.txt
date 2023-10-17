@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(PkgConfig)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Network Xml REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Quick)
 pkg_check_modules(QTXMLRPC REQUIRED QtXMLRpc>=1.0.0)
 
 message("Using Qt${QT_VERSION_MAJOR}")
