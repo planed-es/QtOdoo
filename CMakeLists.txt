@@ -22,7 +22,10 @@ set(source_files
 	QOdooModel.cpp
 	QOdooProduct.cpp
 	QOdooPartner.cpp
+	QOdooCountry.cpp
+	QOdooCountryState.cpp
 	QOdooAccount.cpp
+	QOdooAccountJournal.cpp
 	QOdooInvoice.cpp
 	QOdooInvoiceLine.cpp
 	QOdooTax.cpp
@@ -32,7 +35,10 @@ set(header_files
 	QOdooProduct.h
 	QOdooProductTemplate.h
 	QOdooPartner.h
+	QOdooCountry.h
+	QOdooCountryState.h
 	QOdooAccount.h
+	QOdooAccountJournal.h
 	QOdooInvoice.h
 	QOdooInvoiceLine.h
 	QOdooTax.h

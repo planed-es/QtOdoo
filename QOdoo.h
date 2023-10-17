@@ -95,6 +95,25 @@ public:
     });
   }
 
+  template<typename MODEL, typename LIST>
+  void fetchRelationship(QOdooModel* self, QVariantList ids, LIST& out, std::function<void()> callback)
+  {
+    QOdooSearchQuery query;
+
+    query.fields(MODEL().propertyNames());
+    query.where("id").in(ids);
+    fetch<MODEL>(query, [self, &out, callback](QVector<MODEL*> results)
+    {
+      out.clear();
+      for (auto* result : results)
+      {
+        result->setParent(self);
+        out << result;
+      }
+      callback();
+    });
+  }
+
   void save(QOdooModel& model, std::function<void()> callback)
   {
     QVariantList params;
