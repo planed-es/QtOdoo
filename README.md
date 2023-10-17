@@ -121,6 +121,100 @@ You may also remove models from the odoo database using `QOdoo::destroy`:
   });
 ```
 
+## Search Queries
+
+The `QOdooSearchQuery` objects allows you to construct complex queries to filter the objects you want to query.
+
+You *must* provide a list of the fields you want to fetch when using `QOdooSearchQuery`. For instance, to fetch the names of partners:
+
+```c++
+void queryNames(QSharedPointer<OdooService> service)
+{
+  QOdooSearchQuery query;
+
+  query.fields({"name", "country_id"});
+  query.limit(1);
+  service->fetch<QOdooPartner>(query, [service](QVector<QOdooPartner*> results)
+  {
+    if (results.size())
+    {
+      QOdooPartner* partner = results.first();
+
+      qDebug() << "Fetched partner" << partner->name() << "with country id" << partner->countryId();
+    }
+  });
+}
+```
+
+When in doubt, here's a simple way to fetch all the supported fields of a model by using the list of property names from any odoo model, such as:
+
+```c++
+query.fields(QOdooPartner().propertyNames());
+```
+
+### Comparaison operators
+
+You can build your queries criterias by using the `where` method to pick a column,
+and your typical operators (`==, !=, >=, <=, >, <`) to define a condition: 
+
+```c++
+void queryCountries(QSharedPointer<OdooService> service)
+{
+  QOdooSearchQuery query;
+
+  query.fields({"name", "code"});
+  query.where("phone_code") >= 30;
+  query.where("state_required") == true;
+  query.where("zip_required") != false;
+  service->fetch<QOdooCountry>(query, [service](QVector<QOdooCountry*> results)
+  {
+  // ...
+  });
+}
+```
+
+##### Like operator
+
+QOdooSearchQuery also supports the `LIKE` operator:
+
+```c++
+void queryCountries(QSharedPointer<OdooService> service)
+{
+  // ...
+  query.where("name").like("pain");
+  // ...
+}
+```
+
+This will ask for models with a name containing "pain". It is case insensitive by default. You can
+also build more precise queries using options:
+
+```c++
+void queryCuntries(QSharedPointer<OdooService> service)
+{
+  // ...
+  query.where("name").like("%stan", QOdooSearchQuery::CaseSensitive | QOdooSearchQuery::ExactMatch);
+  // ...
+}
+```
+
+The previous example's name filter is now case sensitive. We've also used the `QOdooSearchQuery::ExactMatch`
+option to search for an entire pattern: in this case, the `%stan` pattern will look for names that end in "stan".
+
+##### In operator
+
+Sometimes, rather than look for a single value in a given column, you'll want to fetch any model that matches
+a list of values. This can be achieved using the `in` method:
+
+```c++
+void queryCountries(QSharedPointer<OdooService> service)
+{
+  // ...
+  query.where("country_code").in({"ES", "FR", "IT"});
+  // ...
+}
+```
+
 ## Collections
 
 Collections are helper classes designed to help you navigate through pages of models.
