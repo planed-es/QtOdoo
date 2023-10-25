@@ -4,6 +4,52 @@ Qt library to communicate with an Odoo server using the External API.
 Primarily designed for backend work, it also provides tools useful for
 integrating Odoo with QML frontends.
 
+### Building
+
+You will first need to build and install the [QtXMLRpc](https://github.com/planed-es/QtXMLRpc)
+on your system, before building this library.
+
+Build this library with the following command:
+
+```
+mkdir build
+cd build
+cmake ..
+make
+```
+
+Use the following command to install the library on your system:
+
+```
+sudo make install
+```
+
+### Using with CMake 
+
+QtOdoo and QtXMLRpc use pkgconfig: once installed on your system, you can easily add it to
+your projects using CMake's pkgconfig extension:
+
+```cmake
+# add the pkgconfig extension
+find_package(PkgConfig)
+
+# import QtXMLRpc and QtOdoo
+pkg_check_modules(QTXMLRPC REQUIRED QtXMLRpc>=1.0)
+pkg_check_modules(QTODOO REQUIRED QtOdoo>=1.0)
+
+# register the libraries include directories
+include_directories(${QTXMLRPC_INCLUDE_DIRS} ${QTODOO_INCLUDE_DIRS})
+
+# link the libraries to your compile target
+target_link_libraries(target PRIVATE
+  # ...
+  ${QTXMLRPC_LIBRARIES} ${QTODOO_LIBRARIES})
+
+# register QtOdoo's compile flags:
+target_compile_options(target PUBLIC
+  ${QTODOO_CFLAGS_OTHER})
+```
+
 ## Connecting to your server
 
 ```c++
