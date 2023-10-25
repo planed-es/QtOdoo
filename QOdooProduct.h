@@ -49,7 +49,7 @@ protected:
   QVariantMap xmlrpcTransaction() const override;
 
 private:
-  Property<QString>      _name, _defaultCode, _barCode;
+  StringProperty         _name, _defaultCode, _barCode;
   Property<ProductType>  _productType;
   Property<float>        _standardPrice, _lstPrice;
   Property<QVariantList> _taxIds;
