@@ -7,4 +7,4 @@ Name: @PROJECT_NAME@
 Description: @CMAKE_PROJECT_DESCRIPTION@
 Version: @PROJECT_VERSION@
 Cflags: -I${includedir} @QODOO_CFLAGS@
-Libs: -L${libdir} -lQtOdoo -lcurl
+Libs: -L${libdir} -lQt@QT_VERSION_MAJOR@Odoo -lcurl

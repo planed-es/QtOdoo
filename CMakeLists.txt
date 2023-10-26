@@ -13,9 +13,10 @@ find_package(PkgConfig)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Network Xml REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Quick)
-pkg_check_modules(QTXMLRPC REQUIRED QtXMLRpc>=1.0.0)
+pkg_check_modules(QTXMLRPC REQUIRED Qt${QT_VERSION_MAJOR}XMLRpc>=1.0.0)
 
 message("Using Qt${QT_VERSION_MAJOR}")
+set(TARGET_NAME "Qt${QT_VERSION_MAJOR}Odoo")
 
 if (Qt${QT_VERSION_MAJOR}Quick_FOUND)
   set(QODOO_CFLAGS "-DQT_QUICK_LIB")
@@ -53,17 +54,18 @@ set(header_files
 	QOdooEnum.h
 	QOdooSearchQuery.h)
 
-add_library(QtOdoo SHARED ${source_files} ${header_files})
-target_link_libraries(QtOdoo PRIVATE
+add_library(${TARGET_NAME} SHARED ${source_files} ${header_files})
+target_link_libraries(${TARGET_NAME} PRIVATE
   Qt${QT_VERSION_MAJOR}::Core
   Qt${QT_VERSION_MAJOR}::Network
   Qt${QT_VERSION_MAJOR}::Xml
-  QtXMLRpc)
+  ${QTXMLRPC_LIBRARIES}
+)
 
-target_compile_definitions(QtOdoo PRIVATE QTODOO_LIBRARY)
+target_compile_definitions(${TARGET_NAME} PRIVATE QTODOO_LIBRARY)
 
-configure_file(QtOdoo.pc.in QtOdoo.pc @ONLY)
+configure_file(QtOdoo.pc.in ${TARGET_NAME}.pc @ONLY)
 
 install(FILES ${header_files} DESTINATION include)
-install(TARGETS QtOdoo LIBRARY DESTINATION lib)
-install(FILES ${CMAKE_BINARY_DIR}/QtOdoo.pc DESTINATION lib/pkgconfig)
+install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION lib)
+install(FILES ${CMAKE_BINARY_DIR}/${TARGET_NAME}.pc DESTINATION lib/pkgconfig)

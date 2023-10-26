@@ -30,12 +30,16 @@ QtOdoo and QtXMLRpc use pkgconfig: once installed on your system, you can easily
 your projects using CMake's pkgconfig extension:
 
 ```cmake
+# import Qt
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+# ...
+
 # add the pkgconfig extension
 find_package(PkgConfig)
 
 # import QtXMLRpc and QtOdoo
-pkg_check_modules(QTXMLRPC REQUIRED QtXMLRpc>=1.0)
-pkg_check_modules(QTODOO REQUIRED QtOdoo>=1.0)
+pkg_check_modules(QTXMLRPC REQUIRED Qt${QT_VERSION_MAJOR}XMLRpc>=1.0)
+pkg_check_modules(QTODOO REQUIRED Qt${QT_VERSION_MAJOR}Odoo>=1.0)
 
 # register the libraries include directories
 include_directories(${QTXMLRPC_INCLUDE_DIRS} ${QTODOO_INCLUDE_DIRS})
