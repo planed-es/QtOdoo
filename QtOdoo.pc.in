@@ -6,5 +6,5 @@ includedir="${prefix}/include"
 Name: @PROJECT_NAME@
 Description: @CMAKE_PROJECT_DESCRIPTION@
 Version: @PROJECT_VERSION@
-Cflags: -I${includedir}
+Cflags: -I${includedir} @QODOO_CFLAGS@
 Libs: -L${libdir} -lQtOdoo -lcurl

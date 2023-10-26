@@ -5,7 +5,7 @@
 # include "QOdooModel.h"
 # include "QOdoo.h"
 # ifdef QT_QUICK_LIB
-#  include <QQmlListProperty>
+#  include <QtQml/QQmlListProperty>
 # endif
 
 class QOdooCollectionInterface : public QObject

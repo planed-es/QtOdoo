@@ -17,6 +17,12 @@ pkg_check_modules(QTXMLRPC REQUIRED QtXMLRpc>=1.0.0)
 
 message("Using Qt${QT_VERSION_MAJOR}")
 
+if (Qt${QT_VERSION_MAJOR}Quick_FOUND)
+  set(QODOO_CFLAGS "-DQT_QUICK_LIB")
+  add_definitions(${QODOO_CFLAGS})
+  message("Building with QtQuick support")
+endif()
+
 set(source_files
 	QOdoo.cpp
 	QOdooModel.cpp
