@@ -1,5 +1,7 @@
 #include "QOdooAccountJournal.h"
 #include "QOdoo.h"
+#define prop(name, odooName)            construct_qodoo_prop(QOdooAccountJournal, name, odooName)
+#define prop_def(name, odooName, value) construct_qodoo_prop_def(QOdooAccountJournal, name, odooName, value)
 
 static const ODOO_ENUM_BEGIN(journalTypes, QOdooAccountJournal::Type, QString, QOdooAccountJournal::General)
   {QOdooAccountJournal::Sale,     "sale"},
@@ -12,8 +14,10 @@ ODOO_ENUM_END()
 QString QOdooAccountJournal::valueFor(QOdooAccountJournal::Type value) { return journalTypes.fromEnum(value); }
 
 QOdooAccountJournal::QOdooAccountJournal(QObject* parent) : QOdooModel(parent),
-  _name("name"), _code("code"), _type("type"),
-  _restrictModeHashTable("restrict_mode_hash_table")
+  prop(name, name),
+  prop(code, code),
+  prop(type, type),
+  prop(restrictModeHashTable, restrict_mode_hash_table)
 {
   _properties << &_name << &_code << &_type << &_restrictModeHashTable;
 }

@@ -6,15 +6,15 @@
 class QOdooPartner : public QOdooModel
 {
   Q_OBJECT
-  Q_PROPERTY(QString name READ name WRITE setName)
-  Q_PROPERTY(QString vat READ vat WRITE setVat)
-  Q_PROPERTY(QString phone READ phone WRITE setPhone)
-  Q_PROPERTY(QString city READ city WRITE setCity)
-  Q_PROPERTY(QString street READ street WRITE setStreet)
-  Q_PROPERTY(QString zip READ zip WRITE setZip)
-  Q_PROPERTY(QString comment READ comment WRITE setComment)
-  Q_PROPERTY(IdType  receivableAccountId READ receivableAccountId WRITE setReceivableAccountId)
-  Q_PROPERTY(IdType  payableAccountId READ payableAccountId WRITE setPayableAccountId)
+  Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+  Q_PROPERTY(QString vat READ vat WRITE setVat NOTIFY vatChanged)
+  Q_PROPERTY(QString phone READ phone WRITE setPhone NOTIFY phoneChanged)
+  Q_PROPERTY(QString city READ city WRITE setCity NOTIFY cityChanged)
+  Q_PROPERTY(QString street READ street WRITE setStreet NOTIFY streetChanged)
+  Q_PROPERTY(QString zip READ zip WRITE setZip NOTIFY zipChanged)
+  Q_PROPERTY(QString comment READ comment WRITE setComment NOTIFY commentChanged)
+  Q_PROPERTY(IdType  receivableAccountId READ receivableAccountId WRITE setReceivableAccountId NOTIFY receivableAccountIdChanged)
+  Q_PROPERTY(IdType  payableAccountId READ payableAccountId WRITE setPayableAccountId NOTIFY payableAccountIdChanged)
 public:
   const char* odooTypename() const override { return "res.partner"; }
 
@@ -55,6 +55,20 @@ public:
   QString     comment() const { return *_comment; }
   IdType      receivableAccountId() const { return *_receivableAccountId; }
   IdType      payableAccountId() const { return *_payableAccountId; }
+
+signals:
+  void nameChanged();
+  void vatChanged();
+  void phoneChanged();
+  void cityChanged();
+  void streetChanged();
+  void zipChanged();
+  void commentChanged();
+  void countryIdChanged();
+  void stateIdChanged();
+  void companyTypeChanged();
+  void receivableAccountIdChanged();
+  void payableAccountIdChanged();
 
 protected:
   QVariantMap xmlrpcTransaction() const override;

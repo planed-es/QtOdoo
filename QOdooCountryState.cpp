@@ -1,7 +1,11 @@
 #include "QOdooCountryState.h"
+#define prop(name, odooName)            construct_qodoo_prop(QOdooCountryState, name, odooName)
+#define prop_def(name, odooName, value) construct_qodoo_prop_def(QOdooCountryState, name, odooName, value)
 
 QOdooCountryState::QOdooCountryState(QObject* parent) : QOdooModel(parent),
-  _name("name"), _code("code"), _countryId("country_id")
+  prop(name, name),
+  prop(code, code),
+  prop(countryId, country_id)
 {
   _properties << &_name << &_code << &_countryId;
 }

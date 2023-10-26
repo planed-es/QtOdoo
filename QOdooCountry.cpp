@@ -1,9 +1,15 @@
 #include "QOdooCountry.h"
+#define prop(name, odooName)            construct_qodoo_prop(QOdooProduct, name, odooName)
+#define prop_def(name, odooName, value) construct_qodoo_prop_def(QOdooProduct, name, odooName, value)
 
 QOdooCountry::QOdooCountry(QObject* parent) : QOdooModel(parent),
-  _name("name"), _code("code"), _currencyId("currency_id"),
-  _phoneCode("phone_code"), _vatLabel("vat_label"),
-  _stateRequired("state_required"), _zipRequired("zip_required")
+  prop(name, name),
+  prop(code, code),
+  prop(currencyId, currency_id),
+  prop(phoneCode, phone_code),
+  prop(vatLabel, vat_label),
+  prop(stateRequired, state_required),
+  prop(zipRequired, zip_required)
 {
   _properties << &_name << &_code << &_currencyId
               << &_phoneCode << &_vatLabel
@@ -17,8 +23,8 @@ void QOdooCountry::fromVariantMap(QVariantMap data)
   _name.first = data[_name.key].toString();
   _code.first = data[_code.key].toString();
   _currencyId.loadFromVariant(data[_currencyId.key]);
-  _phoneCode = data[_phoneCode.key].toInt();
-  _vatLabel = data[_vatLabel.key].toString();
+  _phoneCode.first = data[_phoneCode.key].toInt();
+  _vatLabel.first = data[_vatLabel.key].toString();
   if (!data[_stateRequired.key].isNull())
     _stateRequired.first = data[_stateRequired.key].toBool();
   if (!data[_zipRequired.key].isNull())

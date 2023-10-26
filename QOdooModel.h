@@ -8,6 +8,10 @@
 # include <QVariantMap>
 # include <QDate>
 # include <optional>
+# define construct_qodoo_prop(type, name, odooName) \
+  _##name(#odooName, [this]() { emit name##Changed(); })
+# define construct_qodoo_prop_def(type, name, odooName, defaultValue) \
+  _##name(#odooName, defaultValue, [this]() { emit name##Changed(); })
 
 class OdooService;
 
@@ -36,22 +40,31 @@ public:
 
   struct PropertyInterface
   {
-    PropertyInterface(const QString& key) : key(key), second(false) {}
+    PropertyInterface(const QString& key, std::function<void()> signal) : key(key), second(false), emitChange(signal) {}
     bool hasChanged() const { return second; }
     void resetState() { second = false; }
 
     QString key;
     bool second;
+    std::function<void()> emitChange;
   };
 
   template<typename TYPE>
   struct Property : public PropertyInterface
   {
-    Property(const QString& key) : PropertyInterface(key) { }
-    Property(const QString& key, const TYPE& value) : PropertyInterface(key) { first = value; this->second = false; }
+    Property(const QString& key, std::function<void()> signal) : PropertyInterface(key, signal) { }
+    Property(const QString& key, const TYPE& value, std::function<void()> signal) : PropertyInterface(key, signal) { first = value; this->second = false; }
     TYPE operator*() const { return first.value(); }
     TYPE valueOr(TYPE altValue) const { return first.value_or(altValue); }
-    void set(const TYPE& value) { if (!first.has_value() || *first != value) { first = value; this->second = true; } }
+    void set(const TYPE& value)
+    {
+      if (!first.has_value() || *first != value)
+      {
+        first = value;
+        this->second = true;
+        emitChange();
+      }
+    }
     Property& operator=(const TYPE& value) { set(value); return *this; }
 
     std::optional<TYPE> first;
@@ -59,15 +72,15 @@ public:
 
   struct StringProperty : Property<QString>
   {
-    StringProperty(const QString& key) : Property<QString>(key) {}
-    StringProperty(const QString& key, const QString& value) : Property<QString>(key, value) {}
+    StringProperty(const QString& key, std::function<void()> signal) : Property<QString>(key, signal) {}
+    StringProperty(const QString& key, const QString& value, std::function<void()> signal) : Property<QString>(key, value, signal) {}
     QString operator*() const { return first.value_or(QString()); }
   };
 
   struct IdProperty : Property<IdType>
   {
-    IdProperty(const QString& key) : Property<IdType>(key, 0) {}
-    IdProperty(const QString& key, IdType value) : Property<IdType>(key, value) {}
+    IdProperty(const QString& key, std::function<void()> signal) : Property<IdType>(key, 0, signal) {}
+    IdProperty(const QString& key, IdType value, std::function<void()> signal) : Property<IdType>(key, value, signal) {}
     void loadFromVariant(QVariant value);
   };
 

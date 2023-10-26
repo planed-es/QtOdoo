@@ -1,12 +1,17 @@
 #include "QOdooInvoiceLine.h"
+#define prop(name, odooName)            construct_qodoo_prop(QOdooInvoiceLine, name, odooName)
+#define prop_def(name, odooName, value) construct_qodoo_prop_def(QOdooInvoiceLine, name, odooName, value)
 
 QOdooInvoiceLine::QOdooInvoiceLine(QObject* parent) :
   QOdooModel(parent),
-  _name("name"),
-  _accountId("account_id", 0), _productId("product_id", 0),
-  _quantity("quantity", 0), _priceUnit("price_unit", 0),
-  _credit("credit", 0), _debit("debit", 0),
-  _taxIds("tax_ids")
+  prop(name,          name),
+  prop_def(accountId, account_id, 0),
+  prop_def(productId, product_id, 0),
+  prop_def(quantity,  quantity,   0),
+  prop_def(priceUnit, price_unit, 0),
+  prop_def(credit,    credit,     0),
+  prop_def(debit,     debit,      0),
+  prop(taxIds,        tax_ids)
 {
   _properties << &_name << &_accountId << &_productId << &_quantity << &_priceUnit << &_taxIds;
 }

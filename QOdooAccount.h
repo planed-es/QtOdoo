@@ -6,12 +6,12 @@
 class QOdooAccount : public QOdooModel
 {
   Q_OBJECT
-  Q_PROPERTY(QString code READ code WRITE setCode)
-  Q_PROPERTY(QString name READ name WRITE setName)
-  Q_PROPERTY(bool reconcile READ reconcile WRITE setReconcile)
-  Q_PROPERTY(bool deprecated READ deprecated WRITE setDeprecated)
-  Q_PROPERTY(bool nonTrade READ nonTrade WRITE setNonTrade)
-  Q_PROPERTY(IdType groupId READ groupId)
+  Q_PROPERTY(QString code READ code WRITE setCode NOTIFY codeChanged)
+  Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+  Q_PROPERTY(bool reconcile READ reconcile WRITE setReconcile NOTIFY reconcileChanged)
+  Q_PROPERTY(bool deprecated READ deprecated WRITE setDeprecated NOTIFY deprecatedChanged)
+  Q_PROPERTY(bool nonTrade READ nonTrade WRITE setNonTrade NOTIFY nonTradeChanged)
+  Q_PROPERTY(IdType groupId READ groupId NOTIFY groupIdChanged)
 public:
   const char* odooTypename() const override { return "account.account"; }
 
@@ -32,6 +32,14 @@ public:
   void setDeprecated(bool value) { _deprecated.set(value); }
   void setNonTrade(bool value) { _nonTrade.set(value); }
   //void setGroupId(IdType value) { _groupId.set(value); }
+
+signals:
+  void codeChanged();
+  void nameChanged();
+  void reconcileChanged();
+  void deprecatedChanged();
+  void nonTradeChanged();
+  void groupIdChanged();
 
 protected:
   QVariantMap xmlrpcTransaction() const override;

@@ -1,4 +1,6 @@
 #include "QOdooPartner.h"
+#define prop(name, odooName)            construct_qodoo_prop(QOdooPartner, name, odooName)
+#define prop_def(name, odooName, value) construct_qodoo_prop_def(QOdooPartner, name, odooName, value)
 
 static const ODOO_ENUM_BEGIN(companyTypes, QOdooPartner::CompanyType, QString, QOdooPartner::NoCompanyType)
   {QOdooPartner::Company, "company"},
@@ -7,14 +9,18 @@ ODOO_ENUM_END()
 
 QOdooPartner::QOdooPartner(QObject* parent) :
   QOdooModel(parent),
-  _name("name"),
-  _vat("vat"), _phone("phone"),
-  _city("city"), _street("street"), _zip("zip"),
-  _countryId("country_id"), _stateId("state_id"),
-  _companyType("company_type", NoCompanyType),
-  _comment("comment"),
-  _receivableAccountId("property_account_receivable_id"),
-  _payableAccountId("property_account_payable_id")
+  prop(name,                name),
+  prop(vat,                 vat),
+  prop(phone,               phone),
+  prop(city,                city),
+  prop(street,              street),
+  prop(zip,                 zip),
+  prop(countryId,           country_id),
+  prop(stateId,             state_id),
+  prop_def(companyType,     company_type, NoCompanyType),
+  prop(comment,             comment),
+  prop(receivableAccountId, property_account_receivable_id),
+  prop(payableAccountId,    property_account_payable_id)
 {
   _properties << &_name << &_vat << &_phone << &_city << &_street << &_zip
               << &_countryId << &_stateId

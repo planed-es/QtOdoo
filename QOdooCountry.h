@@ -6,13 +6,13 @@
 class QOdooCountry : public QOdooModel
 {
   Q_OBJECT
-  Q_PROPERTY(QString name READ name WRITE setName)
-  Q_PROPERTY(QString code READ code WRITE setCode)
-  Q_PROPERTY(IdType currencyId READ currencyId WRITE setCurrencyId)
-  Q_PROPERTY(int phoneCode READ phoneCode WRITE setPhoneCode)
-  Q_PROPERTY(QString vatLabel READ vatLabel WRITE setVatLabel)
-  Q_PROPERTY(bool stateRequired READ stateRequired WRITE setStateRequired)
-  Q_PROPERTY(bool zipRequired READ zipRequired WRITE setZipRequired)
+  Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+  Q_PROPERTY(QString code READ code WRITE setCode NOTIFY codeChanged)
+  Q_PROPERTY(IdType currencyId READ currencyId WRITE setCurrencyId NOTIFY currencyIdChanged)
+  Q_PROPERTY(int phoneCode READ phoneCode WRITE setPhoneCode NOTIFY phoneCodeChanged)
+  Q_PROPERTY(QString vatLabel READ vatLabel WRITE setVatLabel NOTIFY vatLabelChanged)
+  Q_PROPERTY(bool stateRequired READ stateRequired WRITE setStateRequired NOTIFY stateRequiredChanged)
+  Q_PROPERTY(bool zipRequired READ zipRequired WRITE setZipRequired NOTIFY zipRequiredChanged)
 public:
   const char* odooTypename() const override { return "res.country"; }
 
@@ -35,6 +35,15 @@ public:
   QString vatLabel() const { return *_vatLabel; }
   bool stateRequired() const { return _stateRequired.valueOr(false); }
   bool zipRequired() const { return _zipRequired.valueOr(false); }
+
+signals:
+  void nameChanged();
+  void codeChanged();
+  void currencyIdChanged();
+  void phoneCodeChanged();
+  void vatLabelChanged();
+  void stateRequiredChanged();
+  void zipRequiredChanged();
 
 protected:
   QVariantMap xmlrpcTransaction() const override;

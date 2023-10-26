@@ -8,17 +8,17 @@ class QOdooInvoice : public QOdooModel
 {
   friend class OdooService;
   Q_OBJECT
-  Q_PROPERTY(QString  name READ name WRITE setName)
-  Q_PROPERTY(QString  ref READ ref WRITE setRef)
-  Q_PROPERTY(MoveType moveType READ moveType WRITE setMoveType)
-  Q_PROPERTY(State    state READ state WRITE setState)
-  Q_PROPERTY(QDate    date READ date WRITE setDate)
-  Q_PROPERTY(QDate    invoiceDate READ invoiceDate WRITE setInvoiceDate)
-  Q_PROPERTY(QDate    invoiceDateDue READ invoiceDateDue WRITE setInvoiceDateDue)
-  Q_PROPERTY(IdType   partnerId READ partnerId WRITE setPartnerId)
-  Q_PROPERTY(IdType   partnerBankId READ partnerBankId WRITE setPartnerBankId)
-  Q_PROPERTY(IdType   journalId READ journalId WRITE setJournalId)
-  Q_PROPERTY(QString  narration READ narration WRITE setNarration)
+  Q_PROPERTY(QString  name READ name WRITE setName NOTIFY nameChanged)
+  Q_PROPERTY(QString  ref READ ref WRITE setRef NOTIFY refChanged)
+  Q_PROPERTY(MoveType moveType READ moveType WRITE setMoveType NOTIFY moveTypeChanged)
+  Q_PROPERTY(State    state READ state WRITE setState NOTIFY stateChanged)
+  Q_PROPERTY(QDate    date READ date WRITE setDate NOTIFY dateChanged)
+  Q_PROPERTY(QDate    invoiceDate READ invoiceDate WRITE setInvoiceDate NOTIFY invoiceDateChanged)
+  Q_PROPERTY(QDate    invoiceDateDue READ invoiceDateDue WRITE setInvoiceDateDue NOTIFY invoiceDateDueChanged)
+  Q_PROPERTY(IdType   partnerId READ partnerId WRITE setPartnerId NOTIFY partnerIdChanged)
+  Q_PROPERTY(IdType   partnerBankId READ partnerBankId WRITE setPartnerBankId NOTIFY partnerBankIdChanged)
+  Q_PROPERTY(IdType   journalId READ journalId WRITE setJournalId NOTIFY journalIdChanged)
+  Q_PROPERTY(QString  narration READ narration WRITE setNarration NOTIFY narrationChanged)
 public:
   const char* odooTypename() const override { return "account.move"; }
 
@@ -93,6 +93,21 @@ public:
   static QString valueFor(MoveType);
   static QString valueFor(State);
   static QString valueFor(PaymentState);
+
+signals:
+  void nameChanged();
+  void refChanged();
+  void paymentReferenceChanged();
+  void narrationChanged();
+  void paymentStateChanged();
+  void moveTypeChanged();
+  void stateChanged();
+  void dateChanged();
+  void invoiceDateChanged();
+  void invoiceDateDueChanged();
+  void partnerIdChanged();
+  void partnerBankIdChanged();
+  void journalIdChanged();
 
 protected:
   QVariantMap xmlrpcTransaction() const override;

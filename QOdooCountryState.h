@@ -6,9 +6,9 @@
 class QOdooCountryState : public QOdooModel
 {
   Q_OBJECT
-  Q_PROPERTY(QString name READ name WRITE setName)
-  Q_PROPERTY(QString code READ code WRITE setCode)
-  Q_PROPERTY(IdType countryId READ countryId WRITE setCountryId)
+  Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+  Q_PROPERTY(QString code READ code WRITE setCode NOTIFY codeChanged)
+  Q_PROPERTY(IdType countryId READ countryId WRITE setCountryId NOTIFY countryIdChanged)
 public:
   const char* odooTypename() const override { return "res.country.state"; }
 
@@ -23,6 +23,11 @@ public:
   QString name() const { return *_name; }
   QString code() const { return *_code; }
   IdType countryId() const { return *_countryId; }
+
+signals:
+  void nameChanged();
+  void codeChanged();
+  void countryIdChanged();
 
 protected:
   QVariantMap xmlrpcTransaction() const override;

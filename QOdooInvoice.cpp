@@ -1,5 +1,7 @@
 #include "QOdooInvoice.h"
 #include "QOdoo.h"
+#define prop(name, odooName)            construct_qodoo_prop(QOdooInvoice, name, odooName)
+#define prop_def(name, odooName, value) construct_qodoo_prop_def(QOdooInvoice, name, odooName, value)
 
 static const ODOO_ENUM_BEGIN(moveTypes, QOdooInvoice::MoveType, QString, QOdooInvoice::NoMoveType)
   {QOdooInvoice::IncomingInvoice, "in_invoice"},
@@ -32,17 +34,26 @@ return result;
 }
 
 QOdooInvoice::QOdooInvoice(QObject* parent) :
-QOdooModel(parent),
-_name("name"), _ref("ref"), _paymentReference("payment_reference"), _narration("narration"),
-_paymentState("payment_state", NotPaid), _moveType("move_type", NoMoveType), _state("state", NoState),
-_date("date"), _invoiceDate("invoice_date"), _invoiceDateDue("invoice_date_due"),
-_partnerId("partner_id", 0), _journalId("journal_id", 0), _partnerBankId("partner_bank_id", 0)
+  QOdooModel(parent),
+  prop(name,              name),
+  prop(ref,               ref),
+  prop(paymentReference,  payment_reference),
+  prop(narration,         narration),
+  prop_def(paymentState,  payment_state, NotPaid),
+  prop_def(moveType,      move_type,     NoMoveType),
+  prop_def(state,         state,         NoState),
+  prop(date,              date),
+  prop(invoiceDate,       invoice_date),
+  prop(invoiceDateDue,    invoice_date_due),
+  prop_def(partnerId,     partner_id, 0),
+  prop_def(journalId,     journal_id, 0),
+  prop_def(partnerBankId, partner_bank_id, 0)
 {
-_properties << &_name << &_ref
-  << &_paymentReference << &_paymentState
-  << &_moveType << &_state << &_date << &_invoiceDate << &_invoiceDateDue
-  << &_partnerId << &_partnerBankId << &_journalId
-  << &_narration;
+  _properties << &_name << &_ref
+    << &_paymentReference << &_paymentState
+    << &_moveType << &_state << &_date << &_invoiceDate << &_invoiceDateDue
+    << &_partnerId << &_partnerBankId << &_journalId
+    << &_narration;
 }
 
 void QOdooInvoice::fromVariantMap(QVariantMap data)

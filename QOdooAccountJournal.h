@@ -7,10 +7,10 @@
 class QOdooAccountJournal : public QOdooModel
 {
   Q_OBJECT
-  Q_PROPERTY(QString name READ name WRITE setName)
-  Q_PROPERTY(QString code READ code WRITE setCode) 
-  Q_PROPERTY(Type    type READ type WRITE setType)
-  Q_PROPERTY(bool    restrictModeHashTable READ restrictModeHashTable WRITE setRestrictModeHashTable)
+  Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+  Q_PROPERTY(QString code READ code WRITE setCode NOTIFY codeChanged)
+  Q_PROPERTY(Type    type READ type WRITE setType NOTIFY typeChanged)
+  Q_PROPERTY(bool    restrictModeHashTable READ restrictModeHashTable WRITE setRestrictModeHashTable NOTIFY restrictModeHashTableChanged)
 public:
   const char* odooTypename() const override { return "account.journal"; }
 
@@ -44,6 +44,12 @@ public:
   {
     return QOdooModel::propertyNames() << "account_control_ids";
   }
+
+signals:
+  void nameChanged();
+  void codeChanged();
+  void typeChanged();
+  void restrictModeHashTableChanged();
 
 protected:
   QVariantMap xmlrpcTransaction() const override;

@@ -1,9 +1,14 @@
 #include "QOdooAccount.h"
+#define prop(name, odooName)            construct_qodoo_prop(QOdooAccount, name, odooName)
+#define prop_def(name, odooName, value) construct_qodoo_prop_def(QOdooAccount, name, odooName, value)
 
 QOdooAccount::QOdooAccount(QObject* parent) : QOdooModel(parent),
-  _code("code"), _name("name"),
-  _groupId("group_id"),
-  _reconcile("reconcile", false), _deprecated("deprecated", false), _nonTrade("non_trade", false)
+  prop(code,           code),
+  prop(name,           name),
+  prop(groupId,        group_id),
+  prop_def(reconcile,  reconcile,  false),
+  prop_def(deprecated, deprecated, false),
+  prop_def(nonTrade,   non_trade,  false)
 {
   _properties << &_code << &_name << &_reconcile << &_deprecated << &_nonTrade;
 }

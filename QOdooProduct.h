@@ -6,13 +6,13 @@
 class QOdooProduct : public QOdooModel
 {
   Q_OBJECT
-  Q_PROPERTY(QString      name READ name WRITE setName)
-  Q_PROPERTY(QString      defaultCode READ defaultCode WRITE setDefaultCode)
-  Q_PROPERTY(QString      barcode READ barcode WRITE setBarcode)
-  Q_PROPERTY(ProductType  productType READ productType WRITE setProductType)
-  Q_PROPERTY(float        standardPrice READ standardPrice WRITE setStandardPrice)
-  Q_PROPERTY(float        lstPrice READ lstPrice WRITE setLstPrice)
-  Q_PROPERTY(QVariantList taxesIds READ taxesIds WRITE setTaxesIds)
+  Q_PROPERTY(QString      name READ name WRITE setName NOTIFY nameChanged)
+  Q_PROPERTY(QString      defaultCode READ defaultCode WRITE setDefaultCode NOTIFY defaultCodeChanged)
+  Q_PROPERTY(QString      barcode READ barcode WRITE setBarcode NOTIFY barCodeChanged)
+  Q_PROPERTY(ProductType  productType READ productType WRITE setProductType NOTIFY productTypeChanged)
+  Q_PROPERTY(float        standardPrice READ standardPrice WRITE setStandardPrice NOTIFY standardPriceChanged)
+  Q_PROPERTY(float        lstPrice READ lstPrice WRITE setLstPrice NOTIFY lstPriceChanged)
+  Q_PROPERTY(QVariantList taxesIds READ taxesIds WRITE setTaxesIds NOTIFY taxIdsChanged)
 public:
   const char* odooTypename() const override { return "product.product"; }
 
@@ -44,6 +44,15 @@ public:
   void setStandardPrice(float value) { _standardPrice.set(value); }
   void setLstPrice(float value) { _lstPrice.set(value); }
   void setTaxesIds(QVariantList value) { _taxIds.set(value); }
+
+signals:
+  void nameChanged();
+  void defaultCodeChanged();
+  void barCodeChanged();
+  void productTypeChanged();
+  void standardPriceChanged();
+  void lstPriceChanged();
+  void taxIdsChanged();
 
 protected:
   QVariantMap xmlrpcTransaction() const override;

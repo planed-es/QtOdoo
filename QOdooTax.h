@@ -10,16 +10,16 @@ class QOdooTax : public QOdooModel
 {
   friend class OdooService;
   Q_OBJECT
-  Q_PROPERTY(QString name READ name WRITE setName)
-  Q_PROPERTY(QString description READ description WRITE setDescription)
-  Q_PROPERTY(TaxType typeTaxUse READ typeTaxUse WRITE setTypeTaxUse)
-  Q_PROPERTY(AmountType amountType READ amountType WRITE setAmountType)
-  Q_PROPERTY(TaxScope taxScope READ taxScope WRITE setTaxScope)
-  Q_PROPERTY(bool active READ active WRITE setActive)
-  Q_PROPERTY(bool priceInclude READ priceInclude WRITE setPriceInclude)
-  Q_PROPERTY(bool includeBaseAmount READ includeBaseAmount WRITE setIncludeBaseAmount)
-  Q_PROPERTY(bool isBaseAffected READ isBaseAffected WRITE setIsBaseAffected)
-  Q_PROPERTY(float amount READ amount WRITE setAmount)
+  Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+  Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY descriptionChanged)
+  Q_PROPERTY(TaxType typeTaxUse READ typeTaxUse WRITE setTypeTaxUse NOTIFY typeTaxUseChanged)
+  Q_PROPERTY(AmountType amountType READ amountType WRITE setAmountType NOTIFY amountTypeChanged)
+  Q_PROPERTY(TaxScope taxScope READ taxScope WRITE setTaxScope NOTIFY taxScopeChanged)
+  Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
+  Q_PROPERTY(bool priceInclude READ priceInclude WRITE setPriceInclude NOTIFY priceIncludeChanged)
+  Q_PROPERTY(bool includeBaseAmount READ includeBaseAmount WRITE setIncludeBaseAmount NOTIFY includeBaseAmountChanged)
+  Q_PROPERTY(bool isBaseAffected READ isBaseAffected WRITE setIsBaseAffected NOTIFY isBaseAffectedChanged)
+  Q_PROPERTY(float amount READ amount WRITE setAmount NOTIFY amountChanged)
 public:
   const char * odooTypename() const override { return "account.tax"; }
 
@@ -77,6 +77,18 @@ public:
   void setIncludeBaseAmount(bool value) { _includeBaseAmount.set(value); }
   void setIsBaseAffected(bool value) { _isBaseAffected.set(value); }
   void setAmount(float value) { _amount.set(value); }
+
+signals:
+  void nameChanged();
+  void descriptionChanged();
+  void typeTaxUseChanged();
+  void amountTypeChanged();
+  void taxScopeChanged();
+  void activeChanged();
+  void priceIncludeChanged();
+  void includeBaseAmountChanged();
+  void isBaseAffectedChanged();
+  void amountChanged();
 
 protected:
   QVariantMap xmlrpcTransaction() const override;
