@@ -131,6 +131,7 @@ public:
   }
 
   void authenticate(const QString& database, const QString& username, const QString& password, std::function<void()> callback);
+  void authenticate(const QString& database, const QString& username, const QString& password, std::function<void(bool)> callback);
   void execute_kw(const QVariantList& params, std::function<void(QVariant)> callback);
 
   void findObject(const QString& objectType, int id, std::function<void(QVariant)> callback);

@@ -7,6 +7,17 @@ OdooService::OdooService(QUrl baseUrl)
 
 void OdooService::authenticate(const QString& database, const QString& username, const QString& password, std::function<void()> callback)
 {
+  authenticate(database, username, password, [callback, database, username](bool success)
+  {
+    if (success)
+      callback();
+    else
+      qDebug() << "OdooService::authenticate failed (" << database << ", " << username << ")";
+  });
+}
+
+void OdooService::authenticate(const QString& database, const QString& username, const QString& password, std::function<void(bool)> callback)
+{
   this->database = database;
   this->password = password;
   url.setPath("/xmlrpc/2/common");
@@ -16,10 +27,7 @@ void OdooService::authenticate(const QString& database, const QString& username,
   }, [this, callback, database, username, password](QVariant uid)
   {
     this->uid = uid.toInt(0);
-    if (this->uid != 0)
-      callback();
-    else
-      qDebug() << "OdooService::authenticate failed (" << database << ", " << username << ", " << password << ")";
+    callback(this->uid != 0);
   });
 }
 
