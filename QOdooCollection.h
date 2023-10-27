@@ -16,8 +16,8 @@ class QOdooCollectionInterface : public QObject
   Q_PROPERTY(int count READ count NOTIFY countChanged)
   Q_PROPERTY(int pageCount READ pageCount NOTIFY pageCountChanged)
 # ifdef QT_QUICK_LIB
-  Q_PROPERTY(QQmlListProperty<QOdooModel> models READ models NOTIFY modelsChanged)
-  virtual QQmlListProperty<QOdooModel> models() { return QQmlListProperty<QOdooModel>(this, &_models); }
+  Q_PROPERTY(QQmlListProperty<QObject> models READ models NOTIFY modelsChanged)
+  virtual QQmlListProperty<QObject> models() { return QQmlListProperty<QObject>(this, reinterpret_cast<QList<QObject*>*>(&_models)); }
 # endif
 public:
   QOdooCollectionInterface(QObject* parent = nullptr);
