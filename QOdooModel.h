@@ -154,6 +154,8 @@ protected:
   bool markedForDeletion = false;
 };
 
+Q_DECLARE_METATYPE(QOdooModel::IdType)
+
 # include "QOdooEnum.h"
 
 #endif

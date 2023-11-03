@@ -12,9 +12,11 @@ class QOdooPartner : public QOdooModel
   Q_PROPERTY(QString city READ city WRITE setCity NOTIFY cityChanged)
   Q_PROPERTY(QString street READ street WRITE setStreet NOTIFY streetChanged)
   Q_PROPERTY(QString zip READ zip WRITE setZip NOTIFY zipChanged)
+  Q_PROPERTY(QOdooModel::IdType countryId READ countryId WRITE setCountryId NOTIFY countryIdChanged)
+  Q_PROPERTY(QOdooModel::IdType stateId READ stateId WRITE setStateId NOTIFY stateIdChanged)
   Q_PROPERTY(QString comment READ comment WRITE setComment NOTIFY commentChanged)
-  Q_PROPERTY(IdType  receivableAccountId READ receivableAccountId WRITE setReceivableAccountId NOTIFY receivableAccountIdChanged)
-  Q_PROPERTY(IdType  payableAccountId READ payableAccountId WRITE setPayableAccountId NOTIFY payableAccountIdChanged)
+  Q_PROPERTY(QOdooModel::IdType receivableAccountId READ receivableAccountId WRITE setReceivableAccountId NOTIFY receivableAccountIdChanged)
+  Q_PROPERTY(QOdooModel::IdType payableAccountId READ payableAccountId WRITE setPayableAccountId NOTIFY payableAccountIdChanged)
 public:
   const char* odooTypename() const override { return "res.partner"; }
 

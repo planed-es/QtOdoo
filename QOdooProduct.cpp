@@ -16,7 +16,7 @@ QOdooProduct::QOdooProduct(QObject* parent) :
   prop_def(productType,   detailed_type,  NoProductType),
   prop_def(standardPrice, standard_price, 0.f),
   prop_def(lstPrice,      lst_price,      0.f),
-  prop(taxIds,            taxesIds)
+  prop(taxIds,            taxes_id)
 {
   _properties << &_name << &_defaultCode << &_barCode << &_productType << &_standardPrice << &_lstPrice << &_taxIds;
 }

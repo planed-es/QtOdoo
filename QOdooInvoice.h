@@ -15,10 +15,10 @@ class QOdooInvoice : public QOdooModel
   Q_PROPERTY(QDate    date READ date WRITE setDate NOTIFY dateChanged)
   Q_PROPERTY(QDate    invoiceDate READ invoiceDate WRITE setInvoiceDate NOTIFY invoiceDateChanged)
   Q_PROPERTY(QDate    invoiceDateDue READ invoiceDateDue WRITE setInvoiceDateDue NOTIFY invoiceDateDueChanged)
-  Q_PROPERTY(IdType   partnerId READ partnerId WRITE setPartnerId NOTIFY partnerIdChanged)
-  Q_PROPERTY(IdType   partnerBankId READ partnerBankId WRITE setPartnerBankId NOTIFY partnerBankIdChanged)
-  Q_PROPERTY(IdType   journalId READ journalId WRITE setJournalId NOTIFY journalIdChanged)
   Q_PROPERTY(QString  narration READ narration WRITE setNarration NOTIFY narrationChanged)
+  Q_PROPERTY(QOdooModel::IdType partnerId READ partnerId WRITE setPartnerId NOTIFY partnerIdChanged)
+  Q_PROPERTY(QOdooModel::IdType partnerBankId READ partnerBankId WRITE setPartnerBankId NOTIFY partnerBankIdChanged)
+  Q_PROPERTY(QOdooModel::IdType journalId READ journalId WRITE setJournalId NOTIFY journalIdChanged)
 public:
   const char* odooTypename() const override { return "account.move"; }
 

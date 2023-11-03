@@ -6,14 +6,14 @@
 class QOdooInvoiceLine : public QOdooModel
 {
   Q_OBJECT
-  Q_PROPERTY(QString      name      READ name WRITE setName NOTIFY nameChanged)
-  Q_PROPERTY(IdType       accountId READ accountId WRITE setAccountId NOTIFY accountIdChanged)
-  Q_PROPERTY(IdType       productId READ productId WRITE setProductId NOTIFY productIdChanged)
-  Q_PROPERTY(double       quantity  READ quantity WRITE setQuantity NOTIFY quantityChanged)
-  Q_PROPERTY(double       priceUnit READ priceUnit WRITE setPriceUnit NOTIFY priceUnitChanged)
-  Q_PROPERTY(double       credit    READ credit WRITE setCredit NOTIFY creditChanged)
-  Q_PROPERTY(double       debit     READ debit WRITE setDebit NOTIFY debitChanged)
-  Q_PROPERTY(QVariantList taxIds    READ taxIds WRITE setTaxIds NOTIFY taxIdsChanged)
+  Q_PROPERTY(QString            name      READ name WRITE setName NOTIFY nameChanged)
+  Q_PROPERTY(QOdooModel::IdType accountId READ accountId WRITE setAccountId NOTIFY accountIdChanged)
+  Q_PROPERTY(QOdooModel::IdType productId READ productId WRITE setProductId NOTIFY productIdChanged)
+  Q_PROPERTY(double             quantity  READ quantity WRITE setQuantity NOTIFY quantityChanged)
+  Q_PROPERTY(double             priceUnit READ priceUnit WRITE setPriceUnit NOTIFY priceUnitChanged)
+  Q_PROPERTY(double             credit    READ credit WRITE setCredit NOTIFY creditChanged)
+  Q_PROPERTY(double             debit     READ debit WRITE setDebit NOTIFY debitChanged)
+  Q_PROPERTY(QVariantList       taxIds    READ taxIds WRITE setTaxIds NOTIFY taxIdsChanged)
 public:
   const char* odooTypename() const override { return "account.move.line"; }
 

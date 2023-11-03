@@ -8,7 +8,7 @@ class QOdooCountry : public QOdooModel
   Q_OBJECT
   Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
   Q_PROPERTY(QString code READ code WRITE setCode NOTIFY codeChanged)
-  Q_PROPERTY(IdType currencyId READ currencyId WRITE setCurrencyId NOTIFY currencyIdChanged)
+  Q_PROPERTY(QOdooModel::IdType currencyId READ currencyId WRITE setCurrencyId NOTIFY currencyIdChanged)
   Q_PROPERTY(int phoneCode READ phoneCode WRITE setPhoneCode NOTIFY phoneCodeChanged)
   Q_PROPERTY(QString vatLabel READ vatLabel WRITE setVatLabel NOTIFY vatLabelChanged)
   Q_PROPERTY(bool stateRequired READ stateRequired WRITE setStateRequired NOTIFY stateRequiredChanged)

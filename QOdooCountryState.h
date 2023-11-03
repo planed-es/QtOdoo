@@ -8,7 +8,7 @@ class QOdooCountryState : public QOdooModel
   Q_OBJECT
   Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
   Q_PROPERTY(QString code READ code WRITE setCode NOTIFY codeChanged)
-  Q_PROPERTY(IdType countryId READ countryId WRITE setCountryId NOTIFY countryIdChanged)
+  Q_PROPERTY(QOdooModel::IdType countryId READ countryId WRITE setCountryId NOTIFY countryIdChanged)
 public:
   const char* odooTypename() const override { return "res.country.state"; }
 
