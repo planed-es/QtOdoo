@@ -143,6 +143,11 @@ public:
   void updateObject(const QString& objectType, int id, const QVariantList& data, std::function<void()> callback);
   void deleteObject(const QString& objectType, int id, std::function<void()> callback);
 
+  void enableFaults(bool value) { ignoreFaults = !value; }
+
+signals:
+  void faultReceived(QXMLRpcFault);
+
 private:
   void objectsOperation(const QString& operation, const QString& objectType, const QOdooSearchQuery& query, std::function<void(QVariant)> callback);
 
@@ -172,6 +177,7 @@ private:
   QXMLRpcClient xmlrpc;
   int           uid;
   QString       database, password;
+  bool          ignoreFaults = true;
 };
 
 #endif

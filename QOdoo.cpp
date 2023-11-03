@@ -122,7 +122,13 @@ void OdooService::createObject(const QString& objectType, const QVariantList& da
 
   params << objectType << "create";
   params.push_back(data);
-  execute_kw(params, [callback](QVariant id) { callback(id.toInt()); });
+  execute_kw(params, [this, callback](QVariant id)
+  {
+    if (ignoreFaults || !QXMLRpcFault::isFault(id))
+      callback(id.toInt());
+    else
+      emit faultReceived(id);
+  });
 }
 
 void OdooService::updateObject(const QString& objectType, int id, const QVariantList& data, std::function<void()> callback)
@@ -133,7 +139,13 @@ void OdooService::updateObject(const QString& objectType, int id, const QVariant
   query << data;
   params << objectType << "write";
   params.push_back(query);
-  execute_kw(params, [callback](QVariant) { callback(); });
+  execute_kw(params, [this, callback](QVariant result)
+  {
+    if (ignoreFaults || !QXMLRpcFault::isFault(result))
+      callback();
+    else
+      emit faultReceived(result);
+  });
 }
 
 void OdooService::deleteObject(const QString& objectType, int id, std::function<void()> callback)
@@ -142,5 +154,11 @@ void OdooService::deleteObject(const QString& objectType, int id, std::function<
 
   params << objectType << "unlink";
   params.push_back(QVariantList() << id);
-  execute_kw(params, [callback](QVariant) { callback(); });
+  execute_kw(params, [this, callback](QVariant result)
+  {
+    if (ignoreFaults || !QXMLRpcFault::isFault(result))
+      callback();
+    else
+      emit faultReceived(result);
+  });
 }
