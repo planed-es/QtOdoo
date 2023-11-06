@@ -32,16 +32,16 @@ void QOdooPartner::fromVariantMap(QVariantMap data)
 {
   if (!data["id"].isNull())
     setId(data["id"].toInt());
-  _name.first                = data[_name.key].toString();
-  _vat.first                 = data[_vat.key].toString();
-  _phone.first               = data[_phone.key].toString();
-  _city.first                = data[_city.key].toString();
-  _street.first              = data[_street.key].toString();
-  _zip.first                 = data[_zip.key].toString();
+  _name.loadFromVariant(data[_name.key]);
+  _vat.loadFromVariant(data[_vat.key]);
+  _phone.loadFromVariant(data[_phone.key]);
+  _city.loadFromVariant(data[_city.key]);
+  _street.loadFromVariant(data[_street.key]);
+  _zip.loadFromVariant(data[_zip.key]);
   _countryId.loadFromVariant(data[_countryId.key]);
   _stateId.loadFromVariant(data[_stateId.key]);
-  _companyType.first         = companyTypes.fromValue(data[_companyType.key].toString());
-  _comment.first             = data[_comment.key].toString();
+  _companyType.first = companyTypes.fromValue(data[_companyType.key].toString());
+  _comment.loadFromVariant(data[_comment.key]);
   _receivableAccountId.loadFromVariant(data[_receivableAccountId.key]);
   _payableAccountId.loadFromVariant(data[_payableAccountId.key]);
 }
