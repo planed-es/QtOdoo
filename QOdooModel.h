@@ -20,15 +20,17 @@ class QOdooModel : public QObject
   friend class OdooService;
   Q_OBJECT
   Q_PROPERTY(int id READ id NOTIFY idChanged)
+  Q_PROPERTY(bool markedForDeletion MEMBER markedForDeletion NOTIFY markedForDeletionChanged)
 public:
   typedef unsigned long IdType;
+  constexpr static const bool supportsPagination = true;
 
-  explicit QOdooModel(QObject* parent = nullptr) : QObject(parent) {}
+  explicit QOdooModel(QObject* parent = nullptr);
   virtual ~QOdooModel();
 
   IdType id() const { return _id; }
   void setId(IdType value);
-  void markForDeletion() { markedForDeletion = true; }
+  void markForDeletion() { markedForDeletion = true; emit markedForDeletionChanged(); }
   virtual void onSaved();
 
   virtual QVariantMap xmlrpcTransaction() const = 0;
@@ -75,6 +77,7 @@ public:
     StringProperty(const QString& key, std::function<void()> signal) : Property<QString>(key, signal) {}
     StringProperty(const QString& key, const QString& value, std::function<void()> signal) : Property<QString>(key, value, signal) {}
     QString operator*() const { return first.value_or(QString()); }
+    void loadFromVariant(QVariant value);
   };
 
   struct IdProperty : Property<IdType>
@@ -86,6 +89,11 @@ public:
 
 signals:
   void idChanged();
+  void markedForDeletionChanged();
+  void requestPropertyRefresh();
+
+private:
+  void onRefreshProperties();
 
 protected:
   struct XmlRpcTransaction : public QVariantMap

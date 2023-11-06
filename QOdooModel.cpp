@@ -2,8 +2,19 @@
 #include "QOdoo.h"
 #include <QtGlobal>
 
+QOdooModel::QOdooModel(QObject* parent) : QObject(parent)
+{
+  connect(this, &QOdooModel::requestPropertyRefresh, this, &QOdooModel::onRefreshProperties);
+}
+
 QOdooModel::~QOdooModel()
 {
+}
+
+void QOdooModel::onRefreshProperties()
+{
+  for (const PropertyInterface* property : _properties)
+    property->emitChange();
 }
 
 void QOdooModel::setId(IdType value)
@@ -51,6 +62,25 @@ QStringList QOdooModel::propertyNames() const
   for (const PropertyInterface* property : _properties)
     result << property->key;
   return result;
+}
+
+void QOdooModel::StringProperty::loadFromVariant(QVariant value)
+{
+  if (!value.isNull())
+  {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    switch (value.typeId())
+#else
+    switch (static_cast<QMetaType::Type>(value.type()))
+#endif
+    {
+    case QMetaType::Bool:
+      break ;
+    default:
+      first = value.toString();
+      break ;
+    }
+  }
 }
 
 void QOdooModel::IdProperty::loadFromVariant(QVariant value)
