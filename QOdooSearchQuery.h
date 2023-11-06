@@ -87,6 +87,11 @@ private:
       return query;
     }
 
+    QOdooSearchQuery& like(const QVariant& value, char options = CaseInsensitive)
+    {
+      return like(value.toString(), options);
+    }
+
     QOdooSearchQuery& like(const QString& value, char options = CaseInsensitive)
     {
       QVariantList comp;
