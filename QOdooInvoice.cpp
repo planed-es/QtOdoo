@@ -58,37 +58,37 @@ QOdooInvoice::QOdooInvoice(QObject* parent) :
 
 void QOdooInvoice::fromVariantMap(QVariantMap data)
 {
-_name.first             = data[_name.key].toString();
-_ref.first              = data[_ref.key].toString();
-_paymentReference.first = data[_paymentReference.key].toString();
-_paymentState.first     = paymentStates.fromValue(data[_paymentState.key].toString());
-_moveType.first         = moveTypes.fromValue(data[_moveType.key].toString());
-_state.first            = states.fromValue(data[_state.key].toString());
-_date.first             = QDate::fromString(data[_date.key].toString(), "yyyy-MM-dd");
-_invoiceDate.first      = QDate::fromString(data[_invoiceDate.key].toString(), "yyyy-MM-dd");
-_invoiceDateDue.first   = QDate::fromString(data[_invoiceDateDue.key].toString(), "yyyy-MM-dd");
-_partnerId.loadFromVariant(data[_partnerId.key]);
-_partnerBankId.first    = data[_partnerBankId.key].toInt();
-_journalId.first        = data[_journalId.key].toInt();
+  _name.first             = data[_name.key].toString();
+  _ref.first              = data[_ref.key].toString();
+  _paymentReference.first = data[_paymentReference.key].toString();
+  _paymentState.first     = paymentStates.fromValue(data[_paymentState.key].toString());
+  _moveType.first         = moveTypes.fromValue(data[_moveType.key].toString());
+  _state.first            = states.fromValue(data[_state.key].toString());
+  _date.first             = QDate::fromString(data[_date.key].toString(), "yyyy-MM-dd");
+  _invoiceDate.first      = QDate::fromString(data[_invoiceDate.key].toString(), "yyyy-MM-dd");
+  _invoiceDateDue.first   = QDate::fromString(data[_invoiceDateDue.key].toString(), "yyyy-MM-dd");
+  _partnerId.loadFromVariant(data[_partnerId.key]);
+  _partnerBankId.first    = data[_partnerBankId.key].toInt();
+  _journalId.first        = data[_journalId.key].toInt();
 }
 
 void QOdooInvoice::onSaved()
 {
-QOdooModel::onSaved();
-for (QOdooInvoiceLine* line : _lines)
-  line->onSaved();
+  QOdooModel::onSaved();
+  for (QOdooInvoiceLine* line : _lines)
+    line->onSaved();
 }
 
 QOdooInvoiceLine* QOdooInvoice::lineAt(unsigned short index)
 {
-while (index >= _lines.size())
-  _lines.push_back(new QOdooInvoiceLine(this));
-return _lines[index];
+  while (index >= _lines.size())
+    _lines.push_back(new QOdooInvoiceLine(this));
+  return _lines[index];
 }
 
 void QOdooInvoice::deleteLineAt(unsigned short index)
 {
-lineAt(index)->markForDeletion();
+  lineAt(index)->markForDeletion();
 }
 
 void QOdooInvoice::fetchRelationships(OdooService& odoo, QVariantMap data, std::function<void ()> callback)
