@@ -3,6 +3,12 @@
 OdooService::OdooService(QUrl baseUrl)
 {
   url = baseUrl;
+  xmlrpc = new QXMLRpcClient();
+}
+
+OdooService::~OdooService()
+{
+  xmlrpc->deleteLater();
 }
 
 void OdooService::authenticate(const QString& database, const QString& username, const QString& password, std::function<void()> callback)
@@ -21,8 +27,8 @@ void OdooService::authenticate(const QString& database, const QString& username,
   this->database = database;
   this->password = password;
   url.setPath("/xmlrpc/2/common");
-  xmlrpc.setEndpoint(url);
-  xmlrpc.call("authenticate", {
+  xmlrpc->setEndpoint(url);
+  xmlrpc->call("authenticate", {
     database, username, password, ""
   }, [this, callback, database, username, password](QVariant uid)
   {
@@ -39,8 +45,8 @@ void OdooService::execute_kw(const QVariantList& params, std::function<void(QVar
   for (const QVariant& param : params)
     finalParams << param;
   url.setPath("/xmlrpc/2/object");
-  xmlrpc.setEndpoint(url);
-  xmlrpc.call("execute_kw", finalParams, callback);
+  xmlrpc->setEndpoint(url);
+  xmlrpc->call("execute_kw", finalParams, callback);
 }
 
 void OdooService::findObject(const QString& objectType, int id, const QStringList& fields, std::function<void(QVariant)> callback)

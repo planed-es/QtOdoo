@@ -11,6 +11,7 @@ class OdooService : public QObject
   Q_OBJECT
 public:
   OdooService(QUrl baseUrl);
+  virtual ~OdooService();
 
   template<typename MODEL>
   void fetch(const QOdooSearchQuery& query, std::function<void(QVector<MODEL*>)> callback)
@@ -173,11 +174,11 @@ private:
       callback(models);
   }
 
-  QUrl          url;
-  QXMLRpcClient xmlrpc;
-  int           uid;
-  QString       database, password;
-  bool          ignoreFaults = true;
+  QUrl           url;
+  QXMLRpcClient* xmlrpc;
+  int            uid;
+  QString        database, password;
+  bool           ignoreFaults = true;
 };
 
 #endif
