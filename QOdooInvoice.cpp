@@ -58,9 +58,9 @@ QOdooInvoice::QOdooInvoice(QObject* parent) :
 
 void QOdooInvoice::fromVariantMap(QVariantMap data)
 {
-  _name.first             = data[_name.key].toString();
-  _ref.first              = data[_ref.key].toString();
-  _paymentReference.first = data[_paymentReference.key].toString();
+  _name.loadFromVariant(data[_name.key]);
+  _ref.loadFromVariant(data[_ref.key]);
+  _paymentReference.loadFromVariant(data[_paymentReference.key]);
   _paymentState.first     = paymentStates.fromValue(data[_paymentState.key].toString());
   _moveType.first         = moveTypes.fromValue(data[_moveType.key].toString());
   _state.first            = states.fromValue(data[_state.key].toString());

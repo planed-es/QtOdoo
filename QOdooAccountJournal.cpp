@@ -24,8 +24,8 @@ QOdooAccountJournal::QOdooAccountJournal(QObject* parent) : QOdooModel(parent),
 
 void QOdooAccountJournal::fromVariantMap(QVariantMap data)
 {
-  _name.first = data[_name.key].toString();
-  _code.first = data[_code.key].toString();
+  _name.loadFromVariant(data[_name.key]);
+  _code.loadFromVariant(data[_code.key]);
   _type.first = journalTypes.fromValue(data[_type.key].toString());
   _restrictModeHashTable = data[_restrictModeHashTable.key].toBool();
 }

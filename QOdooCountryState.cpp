@@ -14,8 +14,8 @@ void QOdooCountryState::fromVariantMap(QVariantMap data)
 {
   if (!data["id"].isNull())
     setId(data["id"].toInt());
-  _name.first = data[_name.key].toString();
-  _code.first = data[_code.key].toString();
+  _name.loadFromVariant(data[_name.key]);
+  _code.loadFromVariant(data[_code.key]);
   _countryId.loadFromVariant(data[_countryId.key]);
 }
 

@@ -17,8 +17,8 @@ void QOdooAccount::fromVariantMap(QVariantMap data)
 {
   if (!data["id"].isNull())
     setId(data["id"].toInt());
-  _code.first = data[_code.key].toString();
-  _name.first = data[_name.key].toString();
+  _code.loadFromVariant(data[_code.key]);
+  _name.loadFromVariant(data[_name.key]);
   _groupId.loadFromVariant(data[_groupId.key]);
   if (!data[_reconcile.key].isNull())
     _reconcile.first = data[_reconcile.key].toBool();

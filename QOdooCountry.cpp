@@ -20,11 +20,11 @@ void QOdooCountry::fromVariantMap(QVariantMap data)
 {
   if (!data["id"].isNull())
     setId(data["id"].toInt());
-  _name.first = data[_name.key].toString();
-  _code.first = data[_code.key].toString();
+  _name.loadFromVariant(data[_name.key]);
+  _code.loadFromVariant(data[_code.key]);
   _currencyId.loadFromVariant(data[_currencyId.key]);
   _phoneCode.first = data[_phoneCode.key].toInt();
-  _vatLabel.first = data[_vatLabel.key].toString();
+  _vatLabel.loadFromVariant(data[_vatLabel.key]);
   if (!data[_stateRequired.key].isNull())
     _stateRequired.first = data[_stateRequired.key].toBool();
   if (!data[_zipRequired.key].isNull())

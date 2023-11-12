@@ -49,8 +49,8 @@ void QOdooTax::fromVariantMap(QVariantMap data)
   qDebug() << "QOdooTax created from variant map:" << data;
   if (!data["id"].isNull())
     setId(data["id"].toULongLong());
-  _name.first = data[_name.key].toString();
-  _description.first = data[_description.key].toString();
+  _name.loadFromVariant(data[_name.key]);
+  _description.loadFromVariant(data[_description.key]);
   _typeTaxUse.first = taxTypes.fromValue(data[_typeTaxUse.key].toString());
   _amountType.first = amountTypes.fromValue(data[_amountType.key].toString());
   _taxScope.first = taxScopes.fromValue(data[_taxScope.key].toString());

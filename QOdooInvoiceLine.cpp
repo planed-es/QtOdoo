@@ -18,7 +18,7 @@ QOdooInvoiceLine::QOdooInvoiceLine(QObject* parent) :
 
 void QOdooInvoiceLine::fromVariantMap(QVariantMap data)
 {
-  _name.first      = data[_name.key].toString();
+  _name.loadFromVariant(data[_name.key]);
   _accountId.loadFromVariant(data[_accountId.key]);
   _productId.loadFromVariant(data[_productId.key]);
   _quantity.first  = data[_quantity.key].toDouble(0);

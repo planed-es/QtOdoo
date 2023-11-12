@@ -45,9 +45,9 @@ void QOdooProduct::fromVariantMap(QVariantMap data)
 {
   if (!data["id"].isNull())
     setId(data["id"].toInt());
-  _name.first          = data[_name.key].toString();
-  _defaultCode.first   = data[_defaultCode.key].toString();
-  _barCode.first       = data[_barCode.key].toString();
+  _name.loadFromVariant(data[_name.key]);
+  _defaultCode.loadFromVariant(data[_defaultCode.key]);
+  _barCode.loadFromVariant(data[_barCode.key]);
   _productType.first   = productTypes.fromValue(data[_productType.key].toString());
   _standardPrice.first = data[_standardPrice.key].toFloat();
   _lstPrice.first      = data[_lstPrice.key].toFloat();
