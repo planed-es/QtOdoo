@@ -33,6 +33,7 @@ set(source_files
 	QOdooCountryState.cpp
 	QOdooAccount.cpp
 	QOdooAccountJournal.cpp
+	QOdooAccountGroup.cpp
 	QOdooInvoice.cpp
 	QOdooInvoiceLine.cpp
 	QOdooTax.cpp
@@ -46,6 +47,7 @@ set(header_files
 	QOdooCountryState.h
 	QOdooAccount.h
 	QOdooAccountJournal.h
+	QOdooAccountGroup.h
 	QOdooInvoice.h
 	QOdooInvoiceLine.h
 	QOdooTax.h
