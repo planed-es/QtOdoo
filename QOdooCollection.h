@@ -8,6 +8,8 @@
 #  include <QtQml/QQmlListProperty>
 # endif
 
+Q_DECLARE_METATYPE(QQmlListProperty<QOdooModel>)
+
 class QOdooCollectionInterface : public QObject
 {
   Q_OBJECT
@@ -31,6 +33,11 @@ public:
   void setPage(unsigned long page) { _query.offset(limit() * page); emit queryChanged(); }
   std::size_t size() const { return _models.size(); }
 
+  Q_INVOKABLE int indexOf(QOdooModel::IdType) const;
+  Q_INVOKABLE int indexOf(const QOdooModel*) const;
+
+  virtual QOdooModel* modelAt(std::size_t index) const { return nullptr; }
+
 signals:
   void modelsChanged();
   void queryChanged();
@@ -38,7 +45,7 @@ signals:
   void pageCountChanged();
 
 protected slots:
-  virtual void onQueryChanged() = 0;
+  virtual void onQueryChanged() {};
 
 protected:
   QList<QOdooModel*> _models;
@@ -47,7 +54,7 @@ protected:
 };
 
 template<typename MODEL>
-class QOdooCollection : public QOdooCollectionInterface
+class QOdooIterableCollection : public QOdooCollectionInterface
 {
 public:
   typedef MODEL Model;
@@ -55,7 +62,7 @@ public:
   class iterator
   {
   public:
-    iterator(const QOdooCollection& self, std::size_t index) : self(self), index(index) {}
+    iterator(const QOdooIterableCollection& self, std::size_t index) : self(self), index(index) {}
 
     MODEL& operator*() const { return *(self.at(index)); }
     MODEL* operator->() const { return self.at(index); }
@@ -65,17 +72,16 @@ public:
     bool operator!=(const iterator& other) const { return !(*this == other); }
   private:
     std::size_t index;
-    const QOdooCollection& self;
+    const QOdooIterableCollection& self;
   };
 
   typedef iterator const_iterator;
 
-  QOdooCollection(OdooService& service, QObject* parent = nullptr)
-    : QOdooCollectionInterface(parent ? parent : &service), service(service)
+  QOdooIterableCollection(QObject* parent) : QOdooCollectionInterface(parent)
   {
   }
 
-  ~QOdooCollection()
+  ~QOdooIterableCollection()
   {
     reset();
   }
@@ -115,6 +121,21 @@ public:
     return reinterpret_cast<MODEL*>(result);
   }
 
+  QOdooModel* modelAt(std::size_t index) const override
+  {
+    return at(index);
+  }
+};
+
+template<typename MODEL, bool paginated = MODEL::supportsPagination>
+class QOdooCollection : public QOdooIterableCollection<MODEL>
+{
+public:
+  QOdooCollection(OdooService& service, QObject* parent = nullptr)
+    : QOdooIterableCollection<MODEL>(parent ? parent : &service), service(service)
+  {
+  }
+
 protected:
   void onQueryChanged() override
   {
@@ -127,7 +148,7 @@ protected:
     service.count<MODEL>(QOdooCollectionInterface::_query, [this](unsigned long value)
     {
       QOdooCollectionInterface::_count = value;
-      emit countChanged();
+      emit QOdooCollectionInterface::countChanged();
     });
   }
 
@@ -137,8 +158,56 @@ protected:
     {
       for (MODEL* model : results)
         model->setParent(this);
-      reset(results);
+      setModels(results);
     });
+  }
+
+  virtual void setModels(const QVector<MODEL*>& list)
+  {
+    QOdooIterableCollection<MODEL>::reset(list);
+  }
+
+  OdooService& service;
+};
+
+template<typename MODEL> // no pagination suppport
+class QOdooCollection<MODEL, false> : public QOdooIterableCollection<MODEL>
+{
+public:
+  QOdooCollection(OdooService& service, QObject* parent = nullptr)
+    : QOdooIterableCollection<MODEL>(parent ? parent : &service), service(service)
+  {
+  }
+
+protected:
+  void onQueryChanged() override
+  {
+    QOdooSearchQuery query = QOdooCollectionInterface::_query;
+
+    query.limit(0);
+    query.offset(0);
+    service.fetch<MODEL>(query, [this](QVector<MODEL*> results)
+    {
+      QOdooCollectionInterface::_count = results.size();
+      int from = QOdooCollectionInterface::page() * QOdooCollectionInterface::limit();
+      int to = from + QOdooCollectionInterface::limit();
+      QVector<MODEL*> selection;
+
+      for (int i = from ; i < to && i < results.size() ; ++i)
+      {
+        MODEL* model = results.at(i);
+
+        model->setParent(this);
+        selection.push_back(model);
+      }
+      setModels(selection);
+      emit QOdooCollectionInterface::countChanged();
+    });
+  }
+
+  virtual void setModels(const QVector<MODEL*>& list)
+  {
+    QOdooIterableCollection<MODEL>::reset(list);
   }
 
   OdooService& service;

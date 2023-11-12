@@ -22,6 +22,7 @@ class QOdooTax : public QOdooModel
   Q_PROPERTY(float amount READ amount WRITE setAmount NOTIFY amountChanged)
 public:
   const char * odooTypename() const override { return "account.tax"; }
+  constexpr static const bool supportsPagination = false;
 
   enum TaxType
   {
