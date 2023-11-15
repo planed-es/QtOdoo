@@ -6,7 +6,7 @@
 // Missing properties: tax_group_id, country_id
 // Missing relationships: distribucion de facturas/distribucion para reembolsos
 
-class QOdooTax : public QOdooModel
+class QTODOO_LIBRARY_EXPORT QOdooTax : public QOdooModel
 {
   friend class OdooService;
   Q_OBJECT

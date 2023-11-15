@@ -4,7 +4,7 @@
 # include "QOdooModel.h"
 # include "QOdooInvoiceLine.h"
 
-class QOdooInvoice : public QOdooModel
+class QTODOO_LIBRARY_EXPORT QOdooInvoice : public QOdooModel
 {
   friend class OdooService;
   Q_OBJECT

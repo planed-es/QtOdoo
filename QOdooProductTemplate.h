@@ -3,7 +3,7 @@
 
 # include "QOdooProduct.h"
 
-class QOdooProductTemplate : public QOdooProduct
+class QTODOO_LIBRARY_EXPORT QOdooProductTemplate : public QOdooProduct
 {
 public:
   const char* odooTypename() const override { return "product.template"; }

@@ -6,7 +6,7 @@
 #include "QOdooSearchQuery.h"
 #include "QOdooModel.h"
 
-class OdooService : public QObject
+class QTODOO_LIBRARY_EXPORT OdooService : public QObject
 {
   Q_OBJECT
 public:

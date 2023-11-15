@@ -3,7 +3,7 @@
 
 # include "QOdooModel.h"
 
-class QOdooAccountGroup : public QOdooModel
+class QTODOO_LIBRARY_EXPORT QOdooAccountGroup : public QOdooModel
 {
   Q_OBJECT
   Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)

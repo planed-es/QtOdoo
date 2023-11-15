@@ -6,11 +6,10 @@
 # include "QOdoo.h"
 # ifdef QT_QUICK_LIB
 #  include <QtQml/QQmlListProperty>
+Q_DECLARE_METATYPE(QQmlListProperty<QOdooModel>)
 # endif
 
-Q_DECLARE_METATYPE(QQmlListProperty<QOdooModel>)
-
-class QOdooCollectionInterface : public QObject
+class QTODOO_LIBRARY_EXPORT QOdooCollectionInterface : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY queryChanged)

@@ -4,7 +4,7 @@
 # include "QOdooModel.h"
 # include "QOdooAccount.h"
 
-class QOdooAccountJournal : public QOdooModel
+class QTODOO_LIBRARY_EXPORT QOdooAccountJournal : public QOdooModel
 {
   Q_OBJECT
   Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)

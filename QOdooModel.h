@@ -1,6 +1,7 @@
 #ifndef  QODOO_MODEL_H
 # define QODOO_MODEL_H
 
+# include "QOdoo_global.h"
 # include <QObject>
 # include <QPair>
 # include <QVector>
@@ -15,7 +16,7 @@
 
 class OdooService;
 
-class QOdooModel : public QObject
+class QTODOO_LIBRARY_EXPORT QOdooModel : public QObject
 {
   friend class OdooService;
   Q_OBJECT
