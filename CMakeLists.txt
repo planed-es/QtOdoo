@@ -37,7 +37,8 @@ set(source_files
 	odoo-qt/QOdooInvoice.cpp
 	odoo-qt/QOdooInvoiceLine.cpp
 	odoo-qt/QOdooTax.cpp
-	odoo-qt/QOdooCollection.cpp)
+	odoo-qt/QOdooCollection.cpp
+	odoo-qt/QOdooTableModel.cpp)
 set(header_files
 	odoo-qt/QOdoo.h
 	odoo-qt/QOdooProduct.h
@@ -55,6 +56,7 @@ set(header_files
 	odoo-qt/QOdooModel.h
 	odoo-qt/QOdooEnum.h
 	odoo-qt/QOdooSearchQuery.h
+	odoo-qt/QOdooTableModel.h
   odoo-qt/QOdoo_global.h)
 
 add_library(${TARGET_NAME} SHARED ${source_files} ${header_files})
