@@ -13,7 +13,7 @@ find_package(PkgConfig)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Network Xml REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Quick)
-pkg_check_modules(QTXMLRPC REQUIRED Qt${QT_VERSION_MAJOR}XMLRpc>=1.0.0)
+#pkg_check_modules(QTXMLRPC REQUIRED Qt${QT_VERSION_MAJOR}XMLRpc>=1.0.0)
 
 message("Using Qt${QT_VERSION_MAJOR}")
 set(TARGET_NAME "Qt${QT_VERSION_MAJOR}Odoo")
@@ -25,36 +25,37 @@ if (Qt${QT_VERSION_MAJOR}Quick_FOUND)
 endif()
 
 set(source_files
-	QOdoo.cpp
-	QOdooModel.cpp
-	QOdooProduct.cpp
-	QOdooPartner.cpp
-	QOdooCountry.cpp
-	QOdooCountryState.cpp
-	QOdooAccount.cpp
-	QOdooAccountJournal.cpp
-	QOdooAccountGroup.cpp
-	QOdooInvoice.cpp
-	QOdooInvoiceLine.cpp
-	QOdooTax.cpp
-	QOdooCollection.cpp)
+	odoo-qt/QOdoo.cpp
+	odoo-qt/QOdooModel.cpp
+	odoo-qt/QOdooProduct.cpp
+	odoo-qt/QOdooPartner.cpp
+	odoo-qt/QOdooCountry.cpp
+	odoo-qt/QOdooCountryState.cpp
+	odoo-qt/QOdooAccount.cpp
+	odoo-qt/QOdooAccountJournal.cpp
+	odoo-qt/QOdooAccountGroup.cpp
+	odoo-qt/QOdooInvoice.cpp
+	odoo-qt/QOdooInvoiceLine.cpp
+	odoo-qt/QOdooTax.cpp
+	odoo-qt/QOdooCollection.cpp)
 set(header_files
-	QOdoo.h
-	QOdooProduct.h
-	QOdooProductTemplate.h
-	QOdooPartner.h
-	QOdooCountry.h
-	QOdooCountryState.h
-	QOdooAccount.h
-	QOdooAccountJournal.h
-	QOdooAccountGroup.h
-	QOdooInvoice.h
-	QOdooInvoiceLine.h
-	QOdooTax.h
-	QOdooCollection.h
-	QOdooModel.h
-	QOdooEnum.h
-	QOdooSearchQuery.h)
+	odoo-qt/QOdoo.h
+	odoo-qt/QOdooProduct.h
+	odoo-qt/QOdooProductTemplate.h
+	odoo-qt/QOdooPartner.h
+	odoo-qt/QOdooCountry.h
+	odoo-qt/QOdooCountryState.h
+	odoo-qt/QOdooAccount.h
+	odoo-qt/QOdooAccountJournal.h
+	odoo-qt/QOdooAccountGroup.h
+	odoo-qt/QOdooInvoice.h
+	odoo-qt/QOdooInvoiceLine.h
+	odoo-qt/QOdooTax.h
+	odoo-qt/QOdooCollection.h
+	odoo-qt/QOdooModel.h
+	odoo-qt/QOdooEnum.h
+	odoo-qt/QOdooSearchQuery.h
+  odoo-qt/QOdoo_global.h)
 
 add_library(${TARGET_NAME} SHARED ${source_files} ${header_files})
 target_link_libraries(${TARGET_NAME} PRIVATE
@@ -68,6 +69,6 @@ target_compile_definitions(${TARGET_NAME} PRIVATE QTODOO_LIBRARY)
 
 configure_file(QtOdoo.pc.in ${TARGET_NAME}.pc @ONLY)
 
-install(FILES ${header_files} DESTINATION include)
+install(FILES ${header_files} DESTINATION include/odoo-qt)
 install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION lib)
 install(FILES ${CMAKE_BINARY_DIR}/${TARGET_NAME}.pc DESTINATION lib/pkgconfig)

@@ -160,7 +160,7 @@ private:
       MODEL* model = new MODEL(this);
       QVariantMap properties = results.takeFirst().toMap();
 
-      qDebug() << "Recursively processing one model, relationships will be fetched, do not flip";
+      //qDebug() << "Recursively processing one model, relationships will be fetched, do not flip";
       models.push_back(model);
       model->setId(properties["id"].toULongLong());
       model->fromVariantMap(properties);
