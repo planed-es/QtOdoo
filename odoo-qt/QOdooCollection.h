@@ -1,6 +1,7 @@
 #ifndef  QODOO_COLLECTION_H
 # define QODOO_COLLECTION_H
 
+# include <QPointer>
 # include "QOdooSearchQuery.h"
 # include "QOdooModel.h"
 # include "QOdoo.h"
@@ -144,20 +145,30 @@ protected:
 
   void fetchCount()
   {
-    service.count<MODEL>(QOdooCollectionInterface::_query, [this](unsigned long value)
+    QPointer<QOdooCollection<MODEL, paginated>> self(this);
+
+    service.count<MODEL>(QOdooCollectionInterface::_query, [self, this](unsigned long value)
     {
-      QOdooCollectionInterface::_count = value;
-      emit QOdooCollectionInterface::countChanged();
+      if (!self.isNull())
+      {
+        QOdooCollectionInterface::_count = value;
+        emit QOdooCollectionInterface::countChanged();
+      }
     });
   }
 
   void fetchModels()
   {
-    service.fetch<MODEL>(QOdooCollectionInterface::_query, [this](QVector<MODEL*> results)
+    QPointer<QOdooCollection<MODEL, paginated>> self(this);
+
+    service.fetch<MODEL>(QOdooCollectionInterface::_query, [self, this](QVector<MODEL*> results)
     {
-      for (MODEL* model : results)
-        model->setParent(this);
-      setModels(results);
+      if (!self.isNull())
+      {
+        for (MODEL* model : results)
+          model->setParent(this);
+        setModels(results);
+      }
     });
   }
 
@@ -182,25 +193,29 @@ protected:
   void onQueryChanged() override
   {
     QOdooSearchQuery query = QOdooCollectionInterface::_query;
+    QPointer<QOdooCollection<MODEL, false>> self(this);
 
     query.limit(0);
     query.offset(0);
-    service.fetch<MODEL>(query, [this](QVector<MODEL*> results)
+    service.fetch<MODEL>(query, [self, this](QVector<MODEL*> results)
     {
-      QOdooCollectionInterface::_count = results.size();
-      int from = QOdooCollectionInterface::page() * QOdooCollectionInterface::limit();
-      int to = from + QOdooCollectionInterface::limit();
-      QVector<MODEL*> selection;
-
-      for (int i = from ; i < to && i < results.size() ; ++i)
+      if (!self.isNull())
       {
-        MODEL* model = results.at(i);
+        QOdooCollectionInterface::_count = results.size();
+        int from = QOdooCollectionInterface::page() * QOdooCollectionInterface::limit();
+        int to = from + QOdooCollectionInterface::limit();
+        QVector<MODEL*> selection;
 
-        model->setParent(this);
-        selection.push_back(model);
+        for (int i = from ; i < to && i < results.size() ; ++i)
+        {
+          MODEL* model = results.at(i);
+
+          model->setParent(this);
+          selection.push_back(model);
+        }
+        setModels(selection);
+        emit QOdooCollectionInterface::countChanged();
       }
-      setModels(selection);
-      emit QOdooCollectionInterface::countChanged();
     });
   }
 
