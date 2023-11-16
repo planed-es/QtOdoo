@@ -165,6 +165,10 @@ protected:
     {
       if (!self.isNull())
       {
+        int limit = QOdooIterableCollection<MODEL>::limit();
+
+        if (limit != 0 && results.size() > limit)
+          results.resize(limit);
         for (MODEL* model : results)
           model->setParent(this);
         setModels(results);
