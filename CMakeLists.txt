@@ -15,13 +15,13 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Network Xml REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Quick)
 #pkg_check_modules(QTXMLRPC REQUIRED Qt${QT_VERSION_MAJOR}XMLRpc>=1.0.0)
 
-message("Using Qt${QT_VERSION_MAJOR}")
+message("Building ${PROJECT_NAME} using Qt${QT_VERSION_MAJOR}")
 set(TARGET_NAME "Qt${QT_VERSION_MAJOR}Odoo")
 
 if (Qt${QT_VERSION_MAJOR}Quick_FOUND)
   set(QODOO_CFLAGS "-DQT_QUICK_LIB")
   add_definitions(${QODOO_CFLAGS})
-  message("Building with QtQuick support")
+  message("Building ${PROJECT_NAME} with QtQuick support")
 endif()
 
 set(source_files
