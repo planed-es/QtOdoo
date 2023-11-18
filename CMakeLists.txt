@@ -75,4 +75,4 @@ configure_file(QtOdoo.pc.in ${TARGET_NAME}.pc @ONLY)
 
 install(FILES ${header_files} DESTINATION include/odoo-qt)
 install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION lib)
-install(FILES ${CMAKE_BINARY_DIR}/${TARGET_NAME}.pc DESTINATION lib/pkgconfig)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}.pc DESTINATION lib/pkgconfig)
