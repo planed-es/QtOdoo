@@ -268,7 +268,8 @@ void queryCountries(QSharedPointer<OdooService> service)
 ## Collections
 
 Collections are helper classes designed to help you navigate through pages of models.
-They can be handy when working with a QML user interface:
+In the following example, we use a C++ controller to fetch and iterate through the
+first page of `resources.partners`:
 
 ```c++
 class MyController : public QObject
@@ -302,7 +303,7 @@ public:
   void onModelsChanged()
   {
     qDebug() << "Received results, page" << collection.page();
-    for (const QOdooPartner& model : collection)
+    for (const QOdooPartner& model : collection) // collections are iterables
       qDebug() << "- found partner:" << model.id() << model.name();
   }
 };
@@ -320,4 +321,102 @@ void odoo_test()
 }
 ```
 
-TODO
+The `setQuery` method is used to store the parameters of the query the
+collection is currently running. Using `setQuery` itself will trigger
+a fetching request, which will in turn trigger the `onModelsChanged`
+slot as soon as a response is received.
+
+Once at least a first fetching request has been sent, the collection will
+store and update the `count` and `pageCount` attributes to let you know
+how much more resources are available:
+
+```
+  void onModelsChanged()
+  {
+    qDebug() << "Total items: " << collection.count() << ", total pages: " << collection.pageCount();
+  }
+```
+
+To change the range of items currently stored in the collection, without
+changing the filtering query that's being used, you may use the `setPage`
+or `setLimit` methods, which will respectively change the current page or
+the amount of items stored per page.
+
+```
+  void onModelsChanged()
+  {
+    qDebug() << "Received results, page" << collection.page();
+    for (const QOdooPartner& model : collection)
+      qDebug() << "- found partner:" << model.id() << model.name();
+    
+    // the following lines will have the Controller fetch each
+    // page one by one until there is no further pages:
+    if (collection.page() < collection.pageCount())
+        collection.setPage(collection.page() + 1);
+  }
+```
+
+### Collections and QML
+
+Collections are also a great starting point to expose your backend to a QML
+frontend. For instance, we could very quickly setup a UI to display lists
+of products with a simple C++ class an QML file.
+
+First, we define a QML component from C++, by implementing QOdooCollection
+with a specific type of resource, and exporting it to our QML module as
+`ProductCollection`:
+
+```c++
+#include <odoo-qt/QOdooCollection.h>
+#include <odoo-qt/QOdooProduct.h>
+
+class ProductCollection : public QOdooCollection<QOdooProduct>
+{
+  Q_OBJECT
+  QML_NAMED_ELEMENT(ProductCollection)
+public:
+  explicit ProductCollection(QObject* parent = nullptr) : QOdooCollection<QOdooProduct>(parent)
+  {
+  }
+};
+```
+
+Then, we implement a QML view which will make use of QOdooCollection's
+pagintion capabilities:
+
+```qml
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import org.name.odoo // your custom module providing ProductCollection
+
+ColumnLayout {
+  ProductCollection {
+    id: collection
+    page: 0
+    limit: 15
+  }
+
+  ListView {
+    model: collection.models
+    delegate: Label {
+      text: collection.models[index]
+    }
+  }
+
+  Text {
+    text: `Page ${collection.page} / ${collection.pageCount}`
+  }
+
+  RowLayout {
+    Button {
+      text: "Previous page"
+      onClicked: if (collection.page > 0) { collection.page-- }
+    }
+    Button {
+      text: "Next page"
+      onClicked: if (collection.page < collection.pageCount) { collection.page++ }
+    }
+  }
+}
+```
