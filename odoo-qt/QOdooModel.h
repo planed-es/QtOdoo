@@ -73,7 +73,7 @@ public:
     std::optional<TYPE> first;
   };
 
-  struct StringProperty : Property<QString>
+  struct QTODOO_LIBRARY_EXPORT StringProperty : Property<QString>
   {
     StringProperty(const QString& key, std::function<void()> signal) : Property<QString>(key, signal) {}
     StringProperty(const QString& key, const QString& value, std::function<void()> signal) : Property<QString>(key, value, signal) {}
@@ -81,7 +81,7 @@ public:
     void loadFromVariant(QVariant value);
   };
 
-  struct IdProperty : Property<IdType>
+  struct QTODOO_LIBRARY_EXPORT IdProperty : Property<IdType>
   {
     IdProperty(const QString& key, std::function<void()> signal) : Property<IdType>(key, 0, signal) {}
     IdProperty(const QString& key, IdType value, std::function<void()> signal) : Property<IdType>(key, value, signal) {}
