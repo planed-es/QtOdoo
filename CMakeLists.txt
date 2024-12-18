@@ -36,6 +36,7 @@ set(source_files
 	odoo-qt/QOdooAccount.cpp
 	odoo-qt/QOdooAccountJournal.cpp
 	odoo-qt/QOdooAccountGroup.cpp
+	odoo-qt/QOdooBankStatementLine.cpp
 	odoo-qt/QOdooInvoice.cpp
 	odoo-qt/QOdooInvoiceLine.cpp
 	odoo-qt/QOdooTax.cpp
@@ -51,6 +52,7 @@ set(header_files
 	odoo-qt/QOdooAccount.h
 	odoo-qt/QOdooAccountJournal.h
 	odoo-qt/QOdooAccountGroup.h
+	odoo-qt/QOdooBankStatementLine.h
 	odoo-qt/QOdooInvoice.h
 	odoo-qt/QOdooInvoiceLine.h
 	odoo-qt/QOdooTax.h
