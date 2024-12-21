@@ -26,11 +26,11 @@ QString QOdooInvoice::valueFor(QOdooInvoice::PaymentState value) { return paymen
 
 static QList<unsigned long> readInvoiceLineIds(QVariant value)
 {
-QList<unsigned long> result;
+  QList<unsigned long> result;
 
-for (QVariant item : value.toList())
-  result.push_back(item.toULongLong());
-return result;
+  for (QVariant item : value.toList())
+    result.push_back(item.toULongLong());
+  return result;
 }
 
 QOdooInvoice::QOdooInvoice(QObject* parent) :
