@@ -123,6 +123,7 @@ protected:
     void addRelationship(const QString& key, const QVector<LIST_ITEM*>& items)
     {
       QVariantList list;
+      unsigned short changeCount = 0;
 
       for (const LIST_ITEM* item : items)
       {
@@ -145,12 +146,14 @@ protected:
           // UPDATE
           else
             entry << 4 << QVariant::fromValue(item->id()) << transaction;
+          changeCount++;
         }
         else
           entry << 4 << QVariant::fromValue(item->id()) << false;
         list.push_back(entry);
       }
-      insert(key, list);
+      if (changeCount)
+        insert(key, list);
     }
   };
 
