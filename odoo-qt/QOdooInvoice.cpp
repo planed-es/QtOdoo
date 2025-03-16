@@ -8,12 +8,6 @@ static const ODOO_ENUM_BEGIN(moveTypes, QOdooInvoice::MoveType, QString, QOdooIn
   {QOdooInvoice::OutgoingInvoice, "out_invoice"}
 ODOO_ENUM_END()
 
-static const ODOO_ENUM_BEGIN(states, QOdooInvoice::State, QString, QOdooInvoice::DraftState)
-  {QOdooInvoice::PostedState,   "posted"},
-  {QOdooInvoice::DraftState,    "draft"},
-  {QOdooInvoice::CanceledState, "cancel"}
-ODOO_ENUM_END()
-
 static const ODOO_ENUM_BEGIN(paymentStates, QOdooInvoice::PaymentState, QString, QOdooInvoice::NotPaid)
   {QOdooInvoice::Paid,          "paid"},
   {QOdooInvoice::PartiallyPaid, "partial"},

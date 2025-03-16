@@ -2,8 +2,11 @@
 # define QODOO_BANK_STATEMENT_LINE
 
 # include "QOdooModel.h"
+# include "QOdooState.h"
 
-class QTODOO_LIBRARY_EXPORT QOdooBankStatementLine : public QOdooModel
+class QTODOO_LIBRARY_EXPORT QOdooBankStatementLine :
+  public QOdooModel,
+  public QOdooState
 {
   friend class OdooService;
   Q_OBJECT
@@ -12,6 +15,9 @@ class QTODOO_LIBRARY_EXPORT QOdooBankStatementLine : public QOdooModel
   Q_PROPERTY(QString paymentRef READ paymentRef WRITE setPaymentRef NOTIFY paymentRefChanged)
   Q_PROPERTY(QOdooModel::IdType journalId READ journalId WRITE setJournalId NOTIFY journalIdChanged)
   Q_PROPERTY(QOdooModel::IdType partnerId READ partnerId WRITE setPartnerId NOTIFY partnerIdChanged)
+  Q_PROPERTY(QOdooModel::IdType moveId READ moveId NOTIFY moveIdChanged)
+  Q_PROPERTY(State state READ state WRITE setState NOTIFY stateChanged)
+  Q_PROPERTY(bool isReconciled READ isReconciled NOTIFY isReconciledChanged)
 public:
   const char* odooTypename() const override { return "account.bank.statement.line"; }
 
@@ -24,12 +30,16 @@ public:
   QDate   date() const { return _date.first.value_or(QDate()); }
   IdType  journalId() const { return *_journalId; }
   IdType  partnerId() const { return *_partnerId; }
+  IdType  moveId() const { return *_moveId; }
+  State   state() const { return *_state; }
+  bool    isReconciled() const { return *_isReconciled; }
 
   void setPaymentRef(const QString& value) { _paymentRef.set(value); }
   void setAmount(double value) { _amount.set(value); }
   void setDate(QDate value) { _date.set(value); }
   void setJournalId(IdType value) { _journalId.set(value); }
   void setPartnerId(IdType value) { _partnerId.set(value); }
+  void setState(State value) { _state.set(value); }
 
 signals:
   void paymentRefChanged();
@@ -37,6 +47,9 @@ signals:
   void dateChanged();
   void journalIdChanged();
   void partnerIdChanged();
+  void moveIdChanged();
+  void stateChanged();
+  void isReconciledChanged();
 
 protected:
   QVariantMap xmlrpcTransaction() const override;
@@ -47,6 +60,9 @@ private:
   StringProperty   _paymentRef;
   IdProperty       _journalId;
   IdProperty       _partnerId;
+  IdProperty       _moveId;
+  Property<State>  _state;
+  Property<bool>   _isReconciled;
 };
 
 #endif

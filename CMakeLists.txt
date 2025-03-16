@@ -39,6 +39,7 @@ set(source_files
 	odoo-qt/QOdooBankStatementLine.cpp
 	odoo-qt/QOdooInvoice.cpp
 	odoo-qt/QOdooInvoiceLine.cpp
+	odoo-qt/QOdooState.cpp
 	odoo-qt/QOdooTax.cpp
 	odoo-qt/QOdooCollection.cpp
 	odoo-qt/QOdooTableModel.cpp)
@@ -55,6 +56,7 @@ set(header_files
 	odoo-qt/QOdooBankStatementLine.h
 	odoo-qt/QOdooInvoice.h
 	odoo-qt/QOdooInvoiceLine.h
+	odoo-qt/QOdooState.h
 	odoo-qt/QOdooTax.h
 	odoo-qt/QOdooCollection.h
 	odoo-qt/QOdooModel.h

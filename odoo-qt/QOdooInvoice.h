@@ -2,9 +2,12 @@
 # define QODOO_INVOICE_H
 
 # include "QOdooModel.h"
+# include "QOdooState.h"
 # include "QOdooInvoiceLine.h"
 
-class QTODOO_LIBRARY_EXPORT QOdooInvoice : public QOdooModel
+class QTODOO_LIBRARY_EXPORT QOdooInvoice :
+  public QOdooModel,
+  public QOdooState
 {
   friend class OdooService;
   Q_OBJECT
@@ -30,15 +33,6 @@ public:
     OutgoingInvoice
   };
   Q_ENUM(MoveType)
-
-  enum State
-  {
-    NoState = 0,
-    DraftState,
-    PostedState,
-    CanceledState
-  };
-  Q_ENUM(State)
 
   enum PaymentState
   {
