@@ -6,14 +6,15 @@
 class QTODOO_LIBRARY_EXPORT QOdooInvoiceLine : public QOdooModel
 {
   Q_OBJECT
-  Q_PROPERTY(QString            name      READ name WRITE setName NOTIFY nameChanged)
-  Q_PROPERTY(QOdooModel::IdType accountId READ accountId WRITE setAccountId NOTIFY accountIdChanged)
-  Q_PROPERTY(QOdooModel::IdType productId READ productId WRITE setProductId NOTIFY productIdChanged)
-  Q_PROPERTY(double             quantity  READ quantity WRITE setQuantity NOTIFY quantityChanged)
-  Q_PROPERTY(double             priceUnit READ priceUnit WRITE setPriceUnit NOTIFY priceUnitChanged)
-  Q_PROPERTY(double             credit    READ credit WRITE setCredit NOTIFY creditChanged)
-  Q_PROPERTY(double             debit     READ debit WRITE setDebit NOTIFY debitChanged)
-  Q_PROPERTY(QVariantList       taxIds    READ taxIds WRITE setTaxIds NOTIFY taxIdsChanged)
+  Q_PROPERTY(QString            name          READ name WRITE setName NOTIFY nameChanged)
+  Q_PROPERTY(QOdooModel::IdType accountId     READ accountId WRITE setAccountId NOTIFY accountIdChanged)
+  Q_PROPERTY(QOdooModel::IdType productId     READ productId WRITE setProductId NOTIFY productIdChanged)
+  Q_PROPERTY(double             quantity      READ quantity WRITE setQuantity NOTIFY quantityChanged)
+  Q_PROPERTY(double             priceUnit     READ priceUnit WRITE setPriceUnit NOTIFY priceUnitChanged)
+  Q_PROPERTY(double             priceSubtotal READ priceSubtotal NOTIFY priceSubtotalChanged)
+  Q_PROPERTY(double             credit        READ credit WRITE setCredit NOTIFY creditChanged)
+  Q_PROPERTY(double             debit         READ debit WRITE setDebit NOTIFY debitChanged)
+  Q_PROPERTY(QVariantList       taxIds        READ taxIds WRITE setTaxIds NOTIFY taxIdsChanged)
 public:
   const char* odooTypename() const override { return "account.move.line"; }
 
@@ -26,6 +27,7 @@ public:
   IdType productId() const { return *_productId; }
   double quantity() const { return *_quantity; }
   double priceUnit() const { return *_priceUnit; }
+  double priceSubtotal() const { return quantity() * priceUnit(); }
   double credit() const { return *_credit; }
   double debit() const { return *_debit; }
   QVariantList taxIds() const { return _taxIds.first.value_or(QVariantList()); }
@@ -45,6 +47,7 @@ signals:
   void productIdChanged();
   void quantityChanged();
   void priceUnitChanged();
+  void priceSubtotalChanged();
   void creditChanged();
   void debitChanged();
   void taxIdsChanged();

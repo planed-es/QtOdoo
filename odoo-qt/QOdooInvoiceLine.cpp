@@ -14,6 +14,8 @@ QOdooInvoiceLine::QOdooInvoiceLine(QObject* parent) :
   prop(taxIds,        tax_ids)
 {
   _properties << &_name << &_accountId << &_productId << &_quantity << &_priceUnit << &_taxIds;
+  connect(this, &QOdooInvoiceLine::quantityChanged,  this, &QOdooInvoiceLine::priceSubtotalChanged);
+  connect(this, &QOdooInvoiceLine::priceUnitChanged, this, &QOdooInvoiceLine::priceSubtotalChanged);
 }
 
 void QOdooInvoiceLine::fromVariantMap(QVariantMap data)
