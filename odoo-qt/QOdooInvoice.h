@@ -80,6 +80,9 @@ public:
   QOdooInvoiceLine* lineAt(unsigned short index);
   void              deleteLineAt(unsigned short index);
 
+  QVector<QOdooInvoiceLine*>::const_iterator begin() const { return _lines.begin(); }
+  QVector<QOdooInvoiceLine*>::const_iterator end() const { return _lines.end(); }
+
   QStringList propertyNames() const override
   {
     return QOdooModel::propertyNames() << "invoice_line_ids";
