@@ -46,7 +46,6 @@ QOdooTax::QOdooTax(QObject* parent) :
 
 void QOdooTax::fromVariantMap(QVariantMap data)
 {
-  qDebug() << "QOdooTax created from variant map:" << data;
   if (!data["id"].isNull())
     setId(data["id"].toULongLong());
   _name.loadFromVariant(data[_name.key]);
