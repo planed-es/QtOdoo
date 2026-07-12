@@ -11,33 +11,45 @@ OdooService::~OdooService()
   xmlrpc->deleteLater();
 }
 
-void OdooService::authenticate(const QString& database, const QString& username, const QString& password, std::function<void()> callback)
+QFuture<bool> OdooService::authenticate(const QString& database, const QString& username, const QString& password, std::function<void()> callback)
 {
-  authenticate(database, username, password, [callback, database, username](bool success)
+  return authenticate(database, username, password)
+    .then([callback, database, username](bool success)
   {
     if (success)
       callback();
     else
       qDebug() << "OdooService::authenticate failed (" << database << ", " << username << ")";
+    return success;
   });
 }
 
-void OdooService::authenticate(const QString& database, const QString& username, const QString& password, std::function<void(bool)> callback)
+QFuture<bool> OdooService::authenticate(const QString& database, const QString& username, const QString& password, std::function<void(bool)> callback)
+{
+  return authenticate(database, username, password)
+    .then([callback](bool value)
+    {
+      callback(value);
+      return value;
+    });
+}
+
+QFuture<bool> OdooService::authenticate(const QString& database, const QString& username, const QString& password)
 {
   this->database = database;
   this->password = password;
   url.setPath("/xmlrpc/2/common");
   xmlrpc->setEndpoint(url);
-  xmlrpc->call("authenticate", {
+  return xmlrpc->call("authenticate", {
     database, username, password, ""
-  }, [this, callback, database, username, password](QVariant uid)
+  }).then([this](QVariant uid) -> bool
   {
     this->uid = uid.toInt(0);
-    callback(this->uid != 0);
+    return this->uid != 0;
   });
 }
 
-void OdooService::execute_kw(const QVariantList& params, std::function<void(QVariant)> callback)
+QFuture<QVariant> OdooService::execute_kw(const QVariantList& params)
 {
   QVariantList finalParams;
 
@@ -46,10 +58,10 @@ void OdooService::execute_kw(const QVariantList& params, std::function<void(QVar
     finalParams << param;
   url.setPath("/xmlrpc/2/object");
   xmlrpc->setEndpoint(url);
-  xmlrpc->call("execute_kw", finalParams, callback);
+  return xmlrpc->call("execute_kw", finalParams);
 }
 
-void OdooService::findObject(const QString& objectType, int id, const QStringList& fields, std::function<void(QVariant)> callback)
+QFuture<QVariant> OdooService::findObject(const QString& objectType, int id, const QStringList& fields, std::function<void(QVariant)> callback)
 {
   QVariantList params;
 
@@ -62,31 +74,45 @@ void OdooService::findObject(const QString& objectType, int id, const QStringLis
     });
   }
   qDebug() << "findObjects read params: " << params;
-  execute_kw(params, [callback](QVariant result)
+  return execute_kw(params)
+    .then([](QVariant result)
+    {
+      if (!QXMLRpcFault::isFault(result) && result.toList().size() > 0)
+        return (result.toList().first());
+      return result;
+    })
+    .then([callback](QVariant result)
+    {
+      if (callback)
+        callback(result);
+      return result;
+    });
+}
+
+QFuture<QVariant> OdooService::findObject(const QString& objectType, int id, std::function<void(QVariant)> callback)
+{
+  return findObject(objectType, id, QStringList(), callback);
+}
+
+QFuture<QVariant> OdooService::findObjects(const QString& objectType, const QOdooSearchQuery& filters, std::function<void(QVariant)> callback)
+{
+  return objectsOperation("search_read", objectType, filters).then([callback](QVariant result)
   {
-    if (!QXMLRpcFault::isFault(result) && result.toList().size() > 0)
-      callback(result.toList().first());
-    else
-      callback(result);
+    callback(result);
+    return result;
   });
-}
-
-void OdooService::findObject(const QString& objectType, int id, std::function<void(QVariant)> callback)
-{
-  findObject(objectType, id, QStringList(), callback);
-}
-
-void OdooService::findObjects(const QString& objectType, const QOdooSearchQuery& filters, std::function<void(QVariant)> callback)
-{
-  objectsOperation("search_read", objectType, filters, callback);
 }
 
 void OdooService::countObjects(const QString& objectType, const QOdooSearchQuery& filters, std::function<void(QVariant)> callback)
 {
-  objectsOperation("search_count", objectType, filters, callback);
+  objectsOperation("search_count", objectType, filters).then([callback](QVariant result)
+  {
+    callback(result);
+    return result;
+  });
 }
 
-void OdooService::objectsOperation(const QString& operation, const QString& objectType, const QOdooSearchQuery& filters, std::function<void(QVariant)> callback)
+QFuture<QVariant> OdooService::objectsOperation(const QString& operation, const QString& objectType, const QOdooSearchQuery& filters)
 {
   QVariantList params;
   QVariantList wrapper;
@@ -105,10 +131,10 @@ void OdooService::objectsOperation(const QString& operation, const QString& obje
     if (keyParameters.keys().size() > 0)
       params.push_back(keyParameters);
   }
-  execute_kw(params, callback);
+  return execute_kw(params);
 }
 
-void OdooService::findObjects(const QString& objectType, const QVector<unsigned long>& ids, const QStringList& fields, std::function<void(QVariant)> callback)
+QFuture<QVariant> OdooService::findObjects(const QString& objectType, const QVector<unsigned long>& ids, const QStringList& fields, std::function<void(QVariant)> callback)
 {
   QVariantList params, idsParam;
   QVariantMap keyParameters;
@@ -119,7 +145,11 @@ void OdooService::findObjects(const QString& objectType, const QVector<unsigned 
   params << objectType << "read";
   params.push_back(idsParam);
   params << fields;
-  execute_kw(params, callback);
+  return execute_kw(params).then([callback](QVariant result)
+  {
+    callback(result);
+    return result;
+  });
 }
 
 void OdooService::createObject(const QString& objectType, const QVariantList& data, std::function<void(int)> callback)
@@ -128,7 +158,7 @@ void OdooService::createObject(const QString& objectType, const QVariantList& da
 
   params << objectType << "create";
   params.push_back(data);
-  execute_kw(params, [this, callback](QVariant id)
+  execute_kw(params).then([this, callback](QVariant id)
   {
     if (ignoreFaults || !QXMLRpcFault::isFault(id))
       callback(id.toInt());
@@ -145,7 +175,7 @@ void OdooService::updateObject(const QString& objectType, int id, const QVariant
   query << data;
   params << objectType << "write";
   params.push_back(query);
-  execute_kw(params, [this, callback](QVariant result)
+  execute_kw(params).then([this, callback](QVariant result)
   {
     if (ignoreFaults || !QXMLRpcFault::isFault(result))
       callback();
@@ -160,7 +190,7 @@ void OdooService::deleteObject(const QString& objectType, int id, std::function<
 
   params << objectType << "unlink";
   params.push_back(QVariantList() << id);
-  execute_kw(params, [this, callback](QVariant result)
+  execute_kw(params).then([this, callback](QVariant result)
   {
     if (ignoreFaults || !QXMLRpcFault::isFault(result))
       callback();

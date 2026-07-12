@@ -131,14 +131,15 @@ public:
     deleteObject(model.odooTypename(), model.id(), callback);
   }
 
-  void authenticate(const QString& database, const QString& username, const QString& password, std::function<void()> callback);
-  void authenticate(const QString& database, const QString& username, const QString& password, std::function<void(bool)> callback);
-  void execute_kw(const QVariantList& params, std::function<void(QVariant)> callback);
+  QFuture<bool> authenticate(const QString& database, const QString& username, const QString& password, std::function<void()> callback);
+  QFuture<bool> authenticate(const QString& database, const QString& username, const QString& password, std::function<void(bool)> callback);
+  QFuture<bool> authenticate(const QString& database, const QString& username, const QString& password);
+  QFuture<QVariant> execute_kw(const QVariantList& params);
 
-  void findObject(const QString& objectType, int id, std::function<void(QVariant)> callback);
-  void findObject(const QString& objectType, int id, const QStringList& fields, std::function<void(QVariant)> callback);
-  void findObjects(const QString& objectType, const QOdooSearchQuery& query, std::function<void(QVariant)> callback);
-  void findObjects(const QString& objectType, const QVector<unsigned long>& ids, const QStringList& fields, std::function<void(QVariant)> callback);
+  QFuture<QVariant> findObject(const QString& objectType, int id, std::function<void(QVariant)> callback);
+  QFuture<QVariant> findObject(const QString& objectType, int id, const QStringList& fields, std::function<void(QVariant)> callback);
+  QFuture<QVariant> findObjects(const QString& objectType, const QOdooSearchQuery& query, std::function<void(QVariant)> callback);
+  QFuture<QVariant> findObjects(const QString& objectType, const QVector<unsigned long>& ids, const QStringList& fields, std::function<void(QVariant)> callback);
   void countObjects(const QString& objectType, const QOdooSearchQuery& query, std::function<void(QVariant)> callback);
   void createObject(const QString& objectType, const QVariantList& data, std::function<void(int)> callback);
   void updateObject(const QString& objectType, int id, const QVariantList& data, std::function<void()> callback);
@@ -150,7 +151,7 @@ signals:
   void faultReceived(QXMLRpcFault);
 
 private:
-  void objectsOperation(const QString& operation, const QString& objectType, const QOdooSearchQuery& query, std::function<void(QVariant)> callback);
+  QFuture<QVariant> objectsOperation(const QString& operation, const QString& objectType, const QOdooSearchQuery& query);
 
   template<typename MODEL>
   void recursivelyProcessReceivedModels(QVector<MODEL*> models, QVariantList results, std::function<void(QVector<MODEL*>)> callback)
