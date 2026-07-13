@@ -1,6 +1,6 @@
 #include "QOdooCountry.h"
-#define prop(name, odooName)            construct_qodoo_prop(QOdooProduct, name, odooName)
-#define prop_def(name, odooName, value) construct_qodoo_prop_def(QOdooProduct, name, odooName, value)
+#define prop(name, odooName)            construct_qodoo_prop(QOdooCountry, name, odooName)
+#define prop_def(name, odooName, value) construct_qodoo_prop_def(QOdooCountry, name, odooName, value)
 
 QOdooCountry::QOdooCountry(QObject* parent) : QOdooModel(parent),
   prop(name, name),
@@ -31,9 +31,9 @@ void QOdooCountry::fromVariantMap(QVariantMap data)
     _zipRequired.first = data[_zipRequired.key].toBool();
 }
 
-QVariantMap QOdooCountry::xmlrpcTransaction() const
+QVariantMap QOdooCountry::jsonTransaction() const
 {
-  XmlRpcTransaction transaction;
+  JsonTransaction transaction;
 
   transaction.addProperty(_name);
   transaction.addProperty(_code);

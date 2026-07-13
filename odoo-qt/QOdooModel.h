@@ -7,18 +7,21 @@
 # include <QVector>
 # include <QVariantList>
 # include <QVariantMap>
+# include <QJsonObject>
+# include <QFuture>
 # include <QDate>
 # include <optional>
+# include "QOdooFuture.h"
 # define construct_qodoo_prop(type, name, odooName) \
   _##name(#odooName, [this]() { emit name##Changed(); })
 # define construct_qodoo_prop_def(type, name, odooName, defaultValue) \
   _##name(#odooName, defaultValue, [this]() { emit name##Changed(); })
 
-class OdooService;
+class QOdooService;
 
 class QTODOO_LIBRARY_EXPORT QOdooModel : public QObject
 {
-  friend class OdooService;
+  friend class QOdooService;
   Q_OBJECT
   Q_PROPERTY(int id READ id NOTIFY idChanged)
   Q_PROPERTY(bool markedForDeletion MEMBER markedForDeletion NOTIFY markedForDeletionChanged)
@@ -34,10 +37,9 @@ public:
   void markForDeletion() { markedForDeletion = true; emit markedForDeletionChanged(); }
   virtual void onSaved();
 
-  virtual QVariantMap xmlrpcTransaction() const = 0;
+  virtual QVariantMap jsonTransaction() const = 0;
   virtual const char* odooTypename() const = 0;
 
-  virtual void save(OdooService& odoo, std::function<void()> callback);
   virtual bool hasChanged() const;
   virtual QStringList propertyNames() const;
 
@@ -97,7 +99,7 @@ private:
   void onRefreshProperties();
 
 protected:
-  struct XmlRpcTransaction : public QVariantMap
+  struct JsonTransaction : public QVariantMap
   {
     void addProperty(const Property<QDate>& property)
     {
@@ -132,7 +134,7 @@ protected:
 
         if (model->hasChanged())
         {
-          QVariantMap transaction = model->xmlrpcTransaction();
+          QVariantMap transaction = model->jsonTransaction();
 
           // IGNORE
           if (item->markedForDeletion && item->id() == 0)
@@ -157,9 +159,10 @@ protected:
     }
   };
 
-  friend struct XmlRpcTransaction;
+  friend struct JsonTransaction;
 
-  virtual void fetchRelationships(OdooService&, QVariantMap, std::function<void()> callback) { callback(); }
+  // Called by QOdooService::buildModel to allow a model to fetch dependent resources. 
+  virtual QFuture<void> fetchRelationships(QOdooService&, const QJsonObject&) { return QOdooFuture::ready(); }
 
   QVector<PropertyInterface*> _properties;
   IdType _id = 0;

@@ -1,5 +1,5 @@
 #include "QOdooModel.h"
-#include "QOdoo.h"
+#include "QOdooService.h"
 #include <QtGlobal>
 
 QOdooModel::QOdooModel(QObject* parent) : QObject(parent)
@@ -21,22 +21,6 @@ void QOdooModel::setId(IdType value)
 {
   _id = value;
   emit idChanged();
-}
-
-void QOdooModel::save(OdooService& odoo, std::function<void()> callback)
-{
-  QVariantList params;
-  std::function<void()> callbacks = [this, callback]()
-  {
-    onSaved();
-    callback();
-  };
-
-  params.push_back(xmlrpcTransaction());
-  if (_id == 0)
-    odoo.createObject(odooTypename(), params, [this, callbacks](int id) { _id = id; callbacks(); });
-  else
-    odoo.updateObject(odooTypename(), _id, params, callbacks);
 }
 
 void QOdooModel::onSaved()

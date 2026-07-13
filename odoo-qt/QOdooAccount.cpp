@@ -28,9 +28,9 @@ void QOdooAccount::fromVariantMap(QVariantMap data)
     _nonTrade.first = data[_nonTrade.key].toBool();
 }
 
-QVariantMap QOdooAccount::xmlrpcTransaction() const
+QVariantMap QOdooAccount::jsonTransaction() const
 {
-  XmlRpcTransaction transaction;
+  JsonTransaction transaction;
 
   transaction.addProperty(_code);
   transaction.addProperty(_name);

@@ -73,7 +73,7 @@ signals:
   void payableAccountIdChanged();
 
 protected:
-  QVariantMap xmlrpcTransaction() const override;
+  QVariantMap jsonTransaction() const override;
 
 private:
   StringProperty _name, _vat, _phone, _city, _street, _zip, _comment;

@@ -46,9 +46,9 @@ void QOdooPartner::fromVariantMap(QVariantMap data)
   _payableAccountId.loadFromVariant(data[_payableAccountId.key]);
 }
 
-QVariantMap QOdooPartner::xmlrpcTransaction() const
+QVariantMap QOdooPartner::jsonTransaction() const
 {
-  XmlRpcTransaction transaction;
+  JsonTransaction transaction;
 
   transaction.addProperty(_name);
   transaction.addProperty(_vat);

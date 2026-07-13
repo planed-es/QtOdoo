@@ -19,9 +19,9 @@ void QOdooCountryState::fromVariantMap(QVariantMap data)
   _countryId.loadFromVariant(data[_countryId.key]);
 }
 
-QVariantMap QOdooCountryState::xmlrpcTransaction() const
+QVariantMap QOdooCountryState::jsonTransaction() const
 {
-  XmlRpcTransaction transaction;
+  JsonTransaction transaction;
 
   transaction.addProperty(_name);
   transaction.addProperty(_code);

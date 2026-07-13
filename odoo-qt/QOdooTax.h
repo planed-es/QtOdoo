@@ -8,7 +8,7 @@
 
 class QTODOO_LIBRARY_EXPORT QOdooTax : public QOdooModel
 {
-  friend class OdooService;
+  friend class QOdooService;
   Q_OBJECT
   Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
   Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY descriptionChanged)
@@ -92,7 +92,7 @@ signals:
   void amountChanged();
 
 protected:
-  QVariantMap xmlrpcTransaction() const override;
+  QVariantMap jsonTransaction() const override;
 
 private:
   StringProperty       _name, _description;

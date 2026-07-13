@@ -26,7 +26,6 @@ public:
 
   QOdooProduct(QObject* parent = nullptr);
 
-  void fetch(OdooService&, IdType id, std::function<void()> callback);
   void fromVariantMap(QVariantMap data);
 
   QString name() const { return *_name; }
@@ -55,7 +54,7 @@ signals:
   void taxIdsChanged();
 
 protected:
-  QVariantMap xmlrpcTransaction() const override;
+  QVariantMap jsonTransaction() const override;
 
 private:
   StringProperty         _name, _defaultCode, _barCode;

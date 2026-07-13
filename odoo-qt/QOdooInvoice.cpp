@@ -1,5 +1,5 @@
 #include "QOdooInvoice.h"
-#include "QOdoo.h"
+#include "QOdooService.h"
 #define prop(name, odooName)            construct_qodoo_prop(QOdooInvoice, name, odooName)
 #define prop_def(name, odooName, value) construct_qodoo_prop_def(QOdooInvoice, name, odooName, value)
 
@@ -17,15 +17,6 @@ ODOO_ENUM_END()
 QString QOdooInvoice::valueFor(QOdooInvoice::MoveType value) { return moveTypes.fromEnum(value); }
 QString QOdooInvoice::valueFor(QOdooInvoice::State value) { return states.fromEnum(value); }
 QString QOdooInvoice::valueFor(QOdooInvoice::PaymentState value) { return paymentStates.fromEnum(value); }
-
-static QList<unsigned long> readInvoiceLineIds(QVariant value)
-{
-  QList<unsigned long> result;
-
-  for (QVariant item : value.toList())
-    result.push_back(item.toULongLong());
-  return result;
-}
 
 QOdooInvoice::QOdooInvoice(QObject* parent) :
   QOdooModel(parent),
@@ -85,16 +76,26 @@ void QOdooInvoice::deleteLineAt(unsigned short index)
   lineAt(index)->markForDeletion();
 }
 
-void QOdooInvoice::fetchRelationships(OdooService& odoo, QVariantMap data, std::function<void ()> callback)
+QFuture<void> QOdooInvoice::fetchRelationships(QOdooService& odoo, const QJsonObject& data)
 {
-  odoo.fetchRelationship<QOdooInvoiceLine>(
-    this, data["invoice_line_ids"].toList(), _lines, callback
-  );
+  QVector<IdType> ids;
+
+  for (const QJsonValue& value : data.value("invoice_line_ids").toArray())
+    ids << value.toULongLong();
+  return odoo.fetch<QOdooInvoiceLine>(ids, this).then([this](QVector<QOdooInvoiceLine*> lines)
+  {
+    for (QOdooInvoiceLine* line : _lines)
+    {
+      if (line->parent() == this)
+        line->deleteLater();
+    }
+    _lines = lines;
+  });
 }
 
-QVariantMap QOdooInvoice::xmlrpcTransaction() const
+QVariantMap QOdooInvoice::jsonTransaction() const
 {
-  XmlRpcTransaction transaction;
+  JsonTransaction transaction;
 
   transaction.addProperty(_name);
   transaction.addProperty(_ref);

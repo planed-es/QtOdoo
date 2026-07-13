@@ -42,7 +42,7 @@ signals:
   void groupIdChanged();
 
 protected:
-  QVariantMap xmlrpcTransaction() const override;
+  QVariantMap jsonTransaction() const override;
 
 private:
   StringProperty _code, _name;

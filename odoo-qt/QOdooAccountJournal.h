@@ -52,8 +52,8 @@ signals:
   void restrictModeHashTableChanged();
 
 protected:
-  QVariantMap xmlrpcTransaction() const override;
-  void fetchRelationships(OdooService&, QVariantMap , std::function<void ()> callback) override;
+  QVariantMap jsonTransaction() const override;
+  QFuture<void> fetchRelationships(QOdooService&, const QJsonObject& data) override;
 
 private:
   StringProperty _name, _code;

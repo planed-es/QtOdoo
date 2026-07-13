@@ -30,9 +30,9 @@ void QOdooInvoiceLine::fromVariantMap(QVariantMap data)
   _taxIds.first    = data[_taxIds.key].toList();
 }
 
-QVariantMap QOdooInvoiceLine::xmlrpcTransaction() const
+QVariantMap QOdooInvoiceLine::jsonTransaction() const
 {
-  XmlRpcTransaction transaction;
+  JsonTransaction transaction;
 
   transaction.addProperty(_name);
   transaction.addProperty(_accountId);

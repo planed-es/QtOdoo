@@ -1,5 +1,4 @@
 #include "QOdooBankStatementLine.h"
-#include "QOdoo.h"
 #define prop(name, odooName)            construct_qodoo_prop(QOdooBankStatementLine, name, odooName)
 #define prop_def(name, odooName, value) construct_qodoo_prop_def(QOdooBankStatementLine, name, odooName, value)
 
@@ -29,9 +28,9 @@ void QOdooBankStatementLine::fromVariantMap(QVariantMap data)
   _isReconciled.first = data[_isReconciled.key].toBool();
 }
 
-QVariantMap QOdooBankStatementLine::xmlrpcTransaction() const
+QVariantMap QOdooBankStatementLine::jsonTransaction() const
 {
-  XmlRpcTransaction transaction;
+  JsonTransaction transaction;
 
   transaction.addProperty(_paymentRef);
   transaction.addProperty(_amount);

@@ -60,9 +60,9 @@ void QOdooTax::fromVariantMap(QVariantMap data)
   _isBaseAffected.first = data[_isBaseAffected.key].toBool();
 }
 
-QVariantMap QOdooTax::xmlrpcTransaction() const
+QVariantMap QOdooTax::jsonTransaction() const
 {
-  XmlRpcTransaction transaction;
+  JsonTransaction transaction;
 
   transaction.addProperty(_name);
   transaction.addProperty(_description);

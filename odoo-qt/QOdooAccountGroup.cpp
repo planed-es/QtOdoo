@@ -19,9 +19,9 @@ void QOdooAccountGroup::fromVariantMap(QVariantMap data)
   _codePrefixEnd.loadFromVariant(data[_codePrefixEnd.key]);
 }
 
-QVariantMap QOdooAccountGroup::xmlrpcTransaction() const
+QVariantMap QOdooAccountGroup::jsonTransaction() const
 {
-  XmlRpcTransaction transaction;
+  JsonTransaction transaction;
 
   transaction.addProperty(_name);
   transaction.addProperty(_codePrefixStart);

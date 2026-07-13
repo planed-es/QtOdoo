@@ -53,7 +53,7 @@ signals:
   void taxIdsChanged();
 
 protected:
-  QVariantMap xmlrpcTransaction() const override;
+  QVariantMap jsonTransaction() const override;
 
 private:
   StringProperty         _name;

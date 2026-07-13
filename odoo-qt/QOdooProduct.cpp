@@ -1,5 +1,4 @@
 #include "QOdooProduct.h"
-#include "QOdoo.h"
 #define prop(name, odooName)            construct_qodoo_prop(QOdooProduct, name, odooName)
 #define prop_def(name, odooName, value) construct_qodoo_prop_def(QOdooProduct, name, odooName, value)
 
@@ -21,26 +20,6 @@ QOdooProduct::QOdooProduct(QObject* parent) :
   _properties << &_name << &_defaultCode << &_barCode << &_productType << &_standardPrice << &_lstPrice << &_taxIds;
 }
 
-void QOdooProduct::fetch(OdooService& odoo, IdType id, std::function<void()> callback)
-{
-  if (id == 0)
-  {
-    callback();
-    return ;
-  }
-  odoo.findObject(odooTypename(), id, propertyNames(), [this, id, callback](QVariant result)
-  {
-    if (!QXMLRpcFault::isFault(result))
-    {
-      _id = id;
-      fromVariantMap(result.toMap());
-      callback();
-    }
-    else
-      callback();
-  });
-}
-
 void QOdooProduct::fromVariantMap(QVariantMap data)
 {
   if (!data["id"].isNull())
@@ -54,9 +33,9 @@ void QOdooProduct::fromVariantMap(QVariantMap data)
   _taxIds.first        = data[_taxIds.key].toList();
 }
 
-QVariantMap QOdooProduct::xmlrpcTransaction() const
+QVariantMap QOdooProduct::jsonTransaction() const
 {
-  XmlRpcTransaction transaction;
+  JsonTransaction transaction;
 
   transaction.addProperty(_name);
   transaction.addProperty(_defaultCode);

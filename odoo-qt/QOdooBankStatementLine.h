@@ -8,7 +8,7 @@ class QTODOO_LIBRARY_EXPORT QOdooBankStatementLine :
   public QOdooModel,
   public QOdooState
 {
-  friend class OdooService;
+  friend class QOdooService;
   Q_OBJECT
   Q_PROPERTY(double amount READ amount WRITE setAmount NOTIFY amountChanged)
   Q_PROPERTY(QDate date READ date WRITE setDate NOTIFY dateChanged)
@@ -52,7 +52,7 @@ signals:
   void isReconciledChanged();
 
 protected:
-  QVariantMap xmlrpcTransaction() const override;
+  QVariantMap jsonTransaction() const override;
 
 private:
   Property<double> _amount;

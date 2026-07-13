@@ -30,7 +30,7 @@ signals:
   void countryIdChanged();
 
 protected:
-  QVariantMap xmlrpcTransaction() const override;
+  QVariantMap jsonTransaction() const override;
 
 private:
   StringProperty _name, _code;

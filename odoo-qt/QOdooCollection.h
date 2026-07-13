@@ -4,7 +4,8 @@
 # include <QPointer>
 # include "QOdooSearchQuery.h"
 # include "QOdooModel.h"
-# include "QOdoo.h"
+# include "QOdooService.h"
+# include "QOdooException.h"
 # ifdef QT_QUICK_LIB
 #  include <QtQml/QQmlListProperty>
 Q_DECLARE_METATYPE(QQmlListProperty<QOdooModel>)
@@ -26,9 +27,9 @@ public:
 
   void setQuery(const QOdooSearchQuery& value) { _query = value; emit queryChanged(); }
   int limit() const { return _query.getLimit(); }
-  int page() const { return _query.getOffset() / limit(); }
+  int page() const { return limit() > 0 ? _query.getOffset() / limit() : 0; }
   int count() const { return _count; }
-  int pageCount() const { return 1 + _count / limit(); }
+  int pageCount() const { return limit() > 0 ? 1 + _count / limit() : 1; }
   void setLimit(unsigned long value) { _query.limit(value); emit queryChanged(); }
   void setPage(unsigned long page) { _query.offset(limit() * page); emit queryChanged(); }
   std::size_t size() const { return _models.size(); }
@@ -43,6 +44,7 @@ signals:
   void queryChanged();
   void countChanged();
   void pageCountChanged();
+  void requestFailed(QOdooException error);
 
 protected slots:
   virtual void onQueryChanged() {};
@@ -131,7 +133,7 @@ template<typename MODEL, bool paginated = MODEL::supportsPagination>
 class QOdooCollection : public QOdooIterableCollection<MODEL>
 {
 public:
-  QOdooCollection(OdooService& service, QObject* parent = nullptr)
+  QOdooCollection(QOdooService& service, QObject* parent = nullptr)
     : QOdooIterableCollection<MODEL>(parent ? parent : &service), service(service)
   {
   }
@@ -145,34 +147,30 @@ protected:
 
   void fetchCount()
   {
-    QPointer<QOdooCollection<MODEL, paginated>> self(this);
-
-    service.count<MODEL>(QOdooCollectionInterface::_query, [self, this](unsigned long value)
+    service.count<MODEL>(QOdooCollectionInterface::_query).then(this, [this](unsigned long value)
     {
-      if (!self.isNull())
-      {
-        QOdooCollectionInterface::_count = value;
-        emit QOdooCollectionInterface::countChanged();
-      }
+      QOdooCollectionInterface::_count = value;
+      emit QOdooCollectionInterface::countChanged();
+    }).onFailed(this, [this](const QOdooException& error)
+    {
+      emit QOdooCollectionInterface::requestFailed(error);
     });
   }
 
   void fetchModels()
   {
-    QPointer<QOdooCollection<MODEL, paginated>> self(this);
-
-    service.fetch<MODEL>(QOdooCollectionInterface::_query, [self, this](QVector<MODEL*> results)
+    // Passing `this` as the parent means every fetched MODEL is already
+    // owned by the collection - no need for a follow-up re-parenting loop.
+    service.fetch<MODEL>(QOdooCollectionInterface::_query, this).then(this, [this](QVector<MODEL*> results)
     {
-      if (!self.isNull())
-      {
-        int limit = QOdooIterableCollection<MODEL>::limit();
+      int limit = QOdooIterableCollection<MODEL>::limit();
 
-        if (limit != 0 && results.size() > limit)
-          results.resize(limit);
-        for (MODEL* model : results)
-          model->setParent(this);
-        setModels(results);
-      }
+      if (limit != 0 && results.size() > limit)
+        results.resize(limit);
+      setModels(results);
+    }).onFailed(this, [this](const QOdooException& error)
+    {
+      emit QOdooCollectionInterface::requestFailed(error);
     });
   }
 
@@ -181,14 +179,14 @@ protected:
     QOdooIterableCollection<MODEL>::reset(list);
   }
 
-  OdooService& service;
+  QOdooService& service;
 };
 
-template<typename MODEL> // no pagination suppport
+template<typename MODEL> // no pagination support
 class QOdooCollection<MODEL, false> : public QOdooIterableCollection<MODEL>
 {
 public:
-  QOdooCollection(OdooService& service, QObject* parent = nullptr)
+  QOdooCollection(QOdooService& service, QObject* parent = nullptr)
     : QOdooIterableCollection<MODEL>(parent ? parent : &service), service(service)
   {
   }
@@ -197,29 +195,28 @@ protected:
   void onQueryChanged() override
   {
     QOdooSearchQuery query = QOdooCollectionInterface::_query;
-    QPointer<QOdooCollection<MODEL, false>> self(this);
 
     query.limit(0);
     query.offset(0);
-    service.fetch<MODEL>(query, [self, this](QVector<MODEL*> results)
+    service.fetch<MODEL>(query, this).then(this, [this](QVector<MODEL*> results)
     {
-      if (!self.isNull())
+      int from = QOdooCollectionInterface::page() * QOdooCollectionInterface::limit();
+      int to = from + QOdooCollectionInterface::limit();
+      QVector<MODEL*> selection;
+
+      QOdooCollectionInterface::_count = results.size();
+      for (int i = 0 ; i < results.size() ; ++i)
       {
-        QOdooCollectionInterface::_count = results.size();
-        int from = QOdooCollectionInterface::page() * QOdooCollectionInterface::limit();
-        int to = from + QOdooCollectionInterface::limit();
-        QVector<MODEL*> selection;
-
-        for (int i = from ; i < to && i < results.size() ; ++i)
-        {
-          MODEL* model = results.at(i);
-
-          model->setParent(this);
-          selection.push_back(model);
-        }
-        setModels(selection);
-        emit QOdooCollectionInterface::countChanged();
+        if (i >= from && i < to)
+          selection.push_back(results.at(i));
+        else
+          results.at(i)->deleteLater();
       }
+      setModels(selection);
+      emit QOdooCollectionInterface::countChanged();
+    }).onFailed(this, [this](const QOdooException& error)
+    {
+      emit QOdooCollectionInterface::requestFailed(error);
     });
   }
 
@@ -228,7 +225,7 @@ protected:
     QOdooIterableCollection<MODEL>::reset(list);
   }
 
-  OdooService& service;
+  QOdooService& service;
 };
 
 #endif

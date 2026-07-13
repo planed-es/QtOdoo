@@ -1,5 +1,5 @@
 #include "QOdooAccountJournal.h"
-#include "QOdoo.h"
+#include "QOdooService.h"
 #define prop(name, odooName)            construct_qodoo_prop(QOdooAccountJournal, name, odooName)
 #define prop_def(name, odooName, value) construct_qodoo_prop_def(QOdooAccountJournal, name, odooName, value)
 
@@ -37,16 +37,26 @@ void QOdooAccountJournal::onSaved()
     account->onSaved();
 }
 
-void QOdooAccountJournal::fetchRelationships(OdooService& odoo, QVariantMap data, std::function<void()> callback)
+QFuture<void> QOdooAccountJournal::fetchRelationships(QOdooService& odoo, const QJsonObject& data)
 {
-  odoo.fetchRelationship<QOdooAccount>(
-    this, data["account_control_ids"].toList(), _accountControlIds, callback
-  );
+  QVector<IdType> ids;
+
+  for (const QJsonValue& value : data.value("account_control_ids").toArray())
+    ids << (IdType)value.toDouble();
+  return odoo.fetch<QOdooAccount>(ids, this).then([this](QVector<QOdooAccount*> accounts)
+  {
+    for (QOdooAccount* account : _accountControlIds)
+    {
+      if (account->parent() == this)
+        account->deleteLater();
+    }
+    _accountControlIds = accounts;
+  });
 }
 
-QVariantMap QOdooAccountJournal::xmlrpcTransaction() const
+QVariantMap QOdooAccountJournal::jsonTransaction() const
 {
-  XmlRpcTransaction transaction;
+  JsonTransaction transaction;
 
   transaction.addProperty(_name);
   transaction.addProperty(_code);

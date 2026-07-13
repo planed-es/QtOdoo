@@ -11,11 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(PkgConfig)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Network Xml REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Network REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Quick)
-if (NOT DEFINED QTXMLRPC_LIBRARIES)
-  pkg_check_modules(QTXMLRPC REQUIRED Qt${QT_VERSION_MAJOR}XMLRpc>=1.0.0)
-endif()
 
 message("Building ${PROJECT_NAME} using Qt${QT_VERSION_MAJOR}")
 set(TARGET_NAME "Qt${QT_VERSION_MAJOR}Odoo")
@@ -69,8 +66,6 @@ add_library(${TARGET_NAME} SHARED ${source_files} ${header_files})
 target_link_libraries(${TARGET_NAME} PRIVATE
   Qt${QT_VERSION_MAJOR}::Core
   Qt${QT_VERSION_MAJOR}::Network
-  Qt${QT_VERSION_MAJOR}::Xml
-  ${QTXMLRPC_LIBRARIES}
 )
 
 target_compile_definitions(${TARGET_NAME} PRIVATE QTODOO_LIBRARY)

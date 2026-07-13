@@ -4,11 +4,11 @@
 # include <QString>
 # include <QVariantList>
 
-class OdooService;
+class QOdooService;
 
 class QOdooSearchQuery
 {
-  friend class OdooService;
+  friend class QOdooService;
 public:
   enum LikeOption
   {
@@ -121,6 +121,8 @@ public:
 
   unsigned long getOffset() const { return _offset; }
   unsigned long getLimit() const { return _limit; }
+  const QStringList& getFields() const { return _fields; }
+  const QVariantList& getParams() const { return params; }
 
 private:
   QVariantList  params;

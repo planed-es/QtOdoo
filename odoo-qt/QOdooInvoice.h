@@ -5,11 +5,13 @@
 # include "QOdooState.h"
 # include "QOdooInvoiceLine.h"
 
+class QOdooService;
+
 class QTODOO_LIBRARY_EXPORT QOdooInvoice :
   public QOdooModel,
   public QOdooState
 {
-  friend class OdooService;
+  friend class QOdooService;
   Q_OBJECT
   Q_PROPERTY(QString  name READ name WRITE setName NOTIFY nameChanged)
   Q_PROPERTY(QString  ref READ ref WRITE setRef NOTIFY refChanged)
@@ -44,7 +46,6 @@ public:
 
   QOdooInvoice(QObject* parent = nullptr);
 
-  //void fetch(OdooService& odoo, IdType id, std::function<void()> callback);
   void fromVariantMap(QVariantMap data);
   void onSaved() override;
 
@@ -108,8 +109,8 @@ signals:
   void journalIdChanged();
 
 protected:
-  QVariantMap xmlrpcTransaction() const override;
-  void fetchRelationships(OdooService&, QVariantMap , std::function<void ()> callback) override;
+  QVariantMap jsonTransaction() const override;
+  QFuture<void> fetchRelationships(QOdooService&, const QJsonObject& data) override;
 
 private:
   StringProperty             _name, _ref, _paymentReference, _narration;
